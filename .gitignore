@@ -1,0 +1,12 @@
+# review output (never commit someone's reviews)
+gapcue-reviews/
+*-review/
+*-review.html
+# release artifacts
+*.zip
+# temp files from atomic writes
+*.tmp
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

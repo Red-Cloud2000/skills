@@ -1,0 +1,21 @@
+# Changelog
+
+## 0.1.0 - 2026-10-14
+
+First public version.
+
+- **Gap analysis**: paste a user story; GapCue lists the gaps and contradictions that block development or testing,
+  and skips what your team already asked in the comments.
+- **Review page**: the whole story with every finding highlighted. Contradictions are linked with curved arrows,
+  each point has a lettered chip, and points off screen get a marker at the edge.
+- **Approve / Out of scope** for each finding; approved questions become a ready-to-send comment for the BA.
+  The buttons stay visible while you scroll, and ✎ lets you reword any question before you approve it.
+- **Add your own findings**: select text → Gap or Contradiction (against another part of the story or something
+  outside it), write the question, and it joins the comment. Edit, delete and undo.
+- **Themes**: Auto, Light, Dark, Paper and Midnight from the round button at the top; the new theme spreads from
+  the button you pick, and your choice is remembered in this browser.
+- **Step through** mode to review one finding at a time.
+- **Saved reviews**: a reviews folder with versions (new or replace), a history page, and decisions saved to disk.
+- **Update notice**: the CLI tells you when a newer GapCue is out (checked at most once a day; `GAPCUE_NO_UPDATE_CHECK=1`
+  turns it off), and the review page shows its version with a link to the releases.
+- **App mode**: one self-contained HTML file for the Claude and ChatGPT apps, with Download / Load decisions.

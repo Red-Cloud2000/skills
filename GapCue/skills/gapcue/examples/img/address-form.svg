@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="640" height="400" fill="#f4f7f8"/>
+  <rect x="40" y="28" width="560" height="344" rx="16" fill="#ffffff" stroke="#d7e2e6"/>
+  <text x="68" y="68" font-size="20" font-weight="700" fill="#0d2233">Add a delivery address</text>
+  <g font-size="12" fill="#566978">
+    <text x="68" y="100">Label</text><rect x="68" y="106" width="240" height="32" rx="8" fill="#eef4f5"/><text x="80" y="127" fill="#0d2233">Home ▾</text>
+    <text x="332" y="100">City</text><rect x="332" y="106" width="240" height="32" rx="8" fill="#eef4f5"/><text x="344" y="127" fill="#0d2233">Select a city ▾</text>
+    <text x="68" y="160">Street address</text><rect x="68" y="166" width="504" height="32" rx="8" fill="#eef4f5"/>
+    <text x="68" y="220">Phone number</text><rect x="68" y="226" width="240" height="32" rx="8" fill="#eef4f5"/>
+    <text x="332" y="220">Area</text><rect x="332" y="226" width="240" height="32" rx="8" fill="#eef4f5"/><text x="344" y="247" fill="#0d2233">Select an area ▾</text>
+  </g>
+  <rect x="68" y="276" width="504" height="48" rx="8" fill="#e3eef0"/>
+  <circle cx="320" cy="296" r="7" fill="#0f7f88"/><text x="334" y="301" font-size="12" fill="#0f7f88">Move the pin to your door</text>
+  <rect x="452" y="334" width="120" height="30" rx="8" fill="#0f7f88"/><text x="490" y="354" font-size="13" font-weight="600" fill="#ffffff">Save</text>
+</svg>

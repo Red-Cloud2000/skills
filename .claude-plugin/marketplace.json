@@ -1,0 +1,12 @@
+{
+  "name": "red-cloud-skills",
+  "owner": { "name": "Abdelrahman Hesham" },
+  "metadata": { "description": "Agent skills by Abdelrahman Hesham." },
+  "plugins": [
+    {
+      "name": "gapcue",
+      "source": "./GapCue",
+      "description": "Find the gaps and contradictions in a user story and turn them into questions for your BA, on an interactive review page."
+    }
+  ]
+}

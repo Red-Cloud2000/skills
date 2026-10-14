@@ -1,0 +1,73 @@
+{
+  "id": "FD-12",
+  "title": "Add a Delivery Address",
+  "meta": { "Product": "Food Delivery App", "Area": "Checkout", "Type": "New feature" },
+  "navigation": ["App", "Cart", "Checkout", "Delivery address", "Add new address"],
+  "steps": [
+    { "en": "Cart", "state": "done" },
+    { "en": "Delivery address", "state": "now" },
+    { "en": "Payment" },
+    { "en": "Confirm" }
+  ],
+  "intro": "Hi team,\nKindly help us clarify the following points on FD-12 (Add a Delivery Address):",
+  "sections": [
+    {
+      "heading": "Description",
+      "eyebrow": "Sections 1 – 6",
+      "html": "<div class='block'><h3><span class='n'>1</span>Description</h3><p>As a <b>customer</b>, I want to add a delivery address at checkout so that my order is delivered to the right place.</p></div><div class='block'><h3><span class='n'>2</span>Context</h3><p>Customers reach this screen from the cart. The address they save is used for this order and kept in their account for next time.</p></div><div class='block'><h3><span class='n'>3</span>Scope</h3><div class='scope'><div class='box'><h4>In scope</h4><ul><li>Adding a new delivery address.</li><li>Choosing a label (Home, Work, Other).</li><li>Pinning the location on a map.</li><li>Editing and deleting saved addresses.</li></ul></div><div class='box'><h4>Out of scope</h4><ul><li>Payment.</li><li>Delivery fee calculation.</li><li>Order tracking.</li></ul></div></div></div><div class='block'><h3><span class='n'>4</span>Fields</h3><div class='tablewrap'><table><thead><tr><th>Field</th><th>Type</th><th>Req.</th><th>Validation / business rule</th></tr></thead><tbody><tr><td>Label</td><td>Dropdown</td><td class='req'>Yes</td><td>Home, Work or Other</td></tr><tr><td>Street address</td><td>Text</td><td class='req'>Yes</td><td>Max 120 characters</td></tr><tr><td>Building / apartment</td><td>Text</td><td class='req'>No</td><td>Max 30 characters</td></tr><tr><td>City</td><td>Dropdown</td><td class='req'>Yes</td><td>Cities we deliver to</td></tr><tr><td>Area</td><td>Dropdown</td><td class='req'>Yes</td><td>Select from the areas of the chosen city</td></tr><tr><td>Phone number</td><td>Numbers</td><td class='req'>Yes</td><td>Must be a valid phone number</td></tr><tr><td>Delivery notes</td><td>Text</td><td class='req'>No</td><td id='notes-limit'>Max 200 characters</td></tr><tr><td>Map pin</td><td>Map</td><td class='req'>Yes</td><td>Must be inside a delivery zone</td></tr></tbody></table></div></div><div class='block'><h3><span class='n'>5</span>Business rules</h3><ul><li>Customers can save up to 5 addresses.</li><li>The first saved address becomes the default address.</li><li>The default address is preselected at checkout.</li></ul></div><div class='block'><h3><span class='n'>6</span>Designs</h3><p>See the address form mock-up below.</p></div>"
+    },
+    {
+      "heading": "Acceptance criteria",
+      "eyebrow": "8 scenarios",
+      "html": "<div class='scen'><article class='sc'><h4><span class='n'>S1</span>Open the address form</h4><p><span class='kw'>Given</span>the customer is at checkout <span class='kw'>When</span>they select Add new address <span class='kw'>Then</span>the address form is displayed.</p></article><article class='sc'><h4><span class='n'>S2</span>Save a valid address</h4><p><span class='kw'>Given</span>all required fields are valid <span class='kw'>When</span>the customer selects Save <span class='kw'>Then</span>the address is saved to their account <span class='kw'>And</span>it is selected for the current order.</p></article><article class='sc'><h4><span class='n'>S3</span>Required fields</h4><p><span class='kw'>Given</span>a required field is empty <span class='kw'>When</span>the customer selects Save <span class='kw'>Then</span>the field is highlighted <span class='kw'>And</span>the address is not saved.</p></article><article class='sc'><h4><span class='n'>S4</span>Choose a city and area</h4><p><span class='kw'>Given</span>the customer selects a city <span class='kw'>When</span>they open the Area list <span class='kw'>Then</span>only the areas of that city are shown.</p></article><article class='sc'><h4><span class='n'>S5</span>Pin the location</h4><p><span class='kw'>Given</span>the address form is open <span class='kw'>When</span>the customer moves the map pin <span class='kw'>Then</span>the pin location is saved with the address.</p></article><article class='sc'><h4><span class='n'>S6</span>Delivery notes</h4><p><span class='kw'>Given</span>the customer adds delivery notes <span class='kw'>Then</span>delivery notes shall support up to 250 characters.</p></article><article class='sc'><h4><span class='n'>S7</span>Saved addresses list</h4><p><span class='kw'>Given</span>the customer has saved addresses <span class='kw'>When</span>they open Delivery address <span class='kw'>Then</span>they see all saved addresses <span class='kw'>And</span>they can keep up to 10 saved addresses.</p></article><article class='sc'><h4><span class='n'>S8</span>Default address</h4><p><span class='kw'>Given</span>the customer has a default address <span class='kw'>When</span>they start checkout <span class='kw'>Then</span>the default address is preselected.</p></article></div>"
+    },
+    {
+      "heading": "Discussion",
+      "eyebrow": "Work item comments · 1",
+      "html": "<div class='comment'><div class='avatar' aria-hidden='true'>QA</div><div class='bubble'><p>@Product Owner Please share the exact error messages for:</p><ul><li>Street address is empty.</li><li>Phone number is invalid.</li></ul></div></div>"
+    }
+  ],
+  "images": [
+    { "path": "img/address-form.svg", "caption": "Address form mock-up (sample)" }
+  ],
+  "findings": [
+    { "id": "max-addresses", "kind": "contra", "title": "How many addresses can be saved: 5 or 10?",
+      "why": "The business rules allow 5 saved addresses, but Scenario 7 says the customer can keep up to 10.",
+      "q": "What is the maximum number of saved addresses: 5 (business rules) or 10 (Scenario 7)? What happens when the customer reaches it?",
+      "anchors": [
+        { "text": "Customers can save up to 5 addresses.", "label": "Business rules" },
+        { "text": "they can keep up to 10 saved addresses.", "label": "Scenario 7" }
+      ] },
+    { "id": "notes-length", "kind": "contra", "title": "Delivery notes: 200 or 250 characters?",
+      "why": "The field table limits delivery notes to 200 characters; Scenario 6 says 250.",
+      "q": "What is the maximum length of delivery notes: 200 (field table) or 250 (Scenario 6)?",
+      "anchors": [
+        { "text": "Max 200 characters", "in": "#notes-limit", "label": "Field table" },
+        { "text": "delivery notes shall support up to 250 characters.", "label": "Scenario 6" }
+      ] },
+    { "id": "phone-format", "kind": "gap", "title": "\"Valid phone number\" is not defined",
+      "why": "The accepted format is not stated (local only, international with country code, mobile only?).",
+      "q": "Which phone formats are valid: local mobile numbers only, or international numbers with a country code too?",
+      "anchors": [ { "text": "Must be a valid phone number" } ] },
+    { "id": "outside-zone", "kind": "gap", "title": "What if the pin is outside a delivery zone?",
+      "why": "The map pin must be inside a delivery zone, but no scenario says what the customer sees or can do when it isn't.",
+      "q": "What happens when the customer drops the pin outside a delivery zone: is Save blocked, and what message do they see?",
+      "anchors": [ { "text": "Must be inside a delivery zone" }, { "text": "the pin location is saved with the address." } ] },
+    { "id": "default-delete", "kind": "gap", "title": "Default address after delete or edit",
+      "why": "The first address becomes the default, but the story doesn't say how to change the default or what happens when it is deleted.",
+      "q": "Can the customer change the default address, and which address becomes the default when the current one is deleted?",
+      "anchors": [ { "text": "The first saved address becomes the default address." } ] },
+    { "id": "edit-delete", "kind": "gap", "title": "Editing and deleting have no scenario",
+      "why": "Editing and deleting saved addresses are in scope, but there are no acceptance criteria for them.",
+      "q": "How does the customer edit or delete a saved address, and is a confirmation needed before deleting?",
+      "anchors": [ { "text": "Editing and deleting saved addresses." } ] },
+    { "id": "guest", "kind": "gap", "title": "Guest checkout",
+      "why": "The address is saved to the customer's account, but it isn't clear whether guests (not signed in) can add an address.",
+      "q": "Can guests without an account add a delivery address? If yes, where is it stored?",
+      "anchors": [ { "text": "the address is saved to their account" } ] },
+    { "id": "area-source", "kind": "gap", "title": "Where does the Area list come from?",
+      "why": "Areas depend on the chosen city, but the source and owner of the list are not defined.",
+      "q": "Who maintains the list of areas per city, and what happens if a city has no areas yet?",
+      "anchors": [ { "text": "Select from the areas of the chosen city" } ] }
+  ]
+}

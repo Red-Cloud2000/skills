@@ -1,0 +1,11 @@
+{
+  "name": "gapcue",
+  "displayName": "GapCue",
+  "version": "0.1.0",
+  "description": "Paste a user story. GapCue helps you spot gaps and contradictions, shows them on an interactive review page, and drafts the questions for your BA.",
+  "author": { "name": "Abdelrahman Hesham", "url": "https://github.com/Red-Cloud2000" },
+  "homepage": "https://github.com/Red-Cloud2000/skills/tree/main/GapCue",
+  "repository": "https://github.com/Red-Cloud2000/skills",
+  "license": "MIT",
+  "keywords": ["requirements", "user-story", "gap-analysis", "qa", "business-analysis", "acceptance-criteria"]
+}
