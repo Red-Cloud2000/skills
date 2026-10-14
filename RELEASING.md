@@ -36,8 +36,9 @@ While on `0.x`:
 `1.0.0` is the first stable public release. After that, **major** = old saved reviews can't be opened any more.
 
 ## 4. Bump and describe
-- Edit `version` in `$P/.claude-plugin/plugin.json` **and** `metadata.version` in `$P/skills/gapcue/SKILL.md` (same number;
-  `check-template.mjs` fails if they differ). Claude Code only offers an update when plugin.json changes; the skill's own
+- Edit `version` in `$P/.claude-plugin/plugin.json`, `metadata.version` in `$P/skills/gapcue/SKILL.md` **and** the version
+  badge at the top of `$P/README.md` (`badge/version-X.Y.Z-`). All three must show the same number; `check-template.mjs`
+  fails if they differ. Then run it again: `node "$S/scripts/check-template.mjs"`. Claude Code only offers an update when plugin.json changes; the skill's own
   "update available" notice and the page footer read SKILL.md.
 - Add a section at the top of `$P/CHANGELOG.md`: `## X.Y.Z - YYYY-MM-DD` with short user-facing bullets (Added / Changed / Fixed).
 

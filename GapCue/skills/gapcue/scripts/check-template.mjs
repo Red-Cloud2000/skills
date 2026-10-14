@@ -17,4 +17,8 @@ const skill = fs.readFileSync(path.join(path.dirname(file), "..", "SKILL.md"), "
 const pj = path.join(path.dirname(file), "..", "..", "..", ".claude-plugin", "plugin.json");
 if (!skill) { console.error("✗ no metadata.version in SKILL.md"); process.exit(1); }
 if (fs.existsSync(pj) && JSON.parse(fs.readFileSync(pj, "utf8")).version !== skill) { console.error("✗ SKILL.md version " + skill + " ≠ plugin.json version"); process.exit(1); }
+// the README's version badge must show the same number
+const readme = path.join(path.dirname(file), "..", "..", "..", "README.md");
+const badge = fs.existsSync(readme) && fs.readFileSync(readme, "utf8").match(/badge\/version-([\d.]+)-/)?.[1];
+if (badge && badge !== skill) { console.error("✗ README version badge " + badge + " ≠ SKILL.md version " + skill); process.exit(1); }
 console.log("✔ template script parses (" + m[1].split("\n").length + " lines)");
