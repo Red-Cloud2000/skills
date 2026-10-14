@@ -11,6 +11,8 @@
 [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-d97757)](#claude-code)
 [![Codex & others](https://img.shields.io/badge/Codex_·_Cursor_·_Gemini_CLI-skill-0d2233)](#codex-cursor-gemini-cli-and-others)
 
+**[Why](#why-gapcue) · [Features](#what-you-get) · [Install](#pick-your-app) · [How to use](#how-to-use) · [Tips](#tips--tricks) · [Saved reviews](#where-your-reviews-are-saved) · [FAQ](#faq)**
+
 <img src="docs/contradiction.jpg" alt="GapCue review page: a contradiction between two parts of the story, linked by curved arrows to a popup with the question for the BA" width="900">
 
 </div>
