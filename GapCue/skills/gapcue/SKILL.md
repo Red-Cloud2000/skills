@@ -2,7 +2,7 @@
 name: gapcue
 description: GapCue analyses a user story or requirement for the important gaps, ambiguities and contradictions, then shows the whole story as an interactive review page (highlighted findings, linked contradictions with arrows, approve / out-of-scope, the reviewer's own findings, a ready-to-send comment for the BA). Reviews are saved with versions and a history page. Use when the user pastes a story (title, description, acceptance criteria, comments, screenshots) and asks for gap analysis, requirement analysis, a story review, or questions for the BA, or asks to reopen old story reviews.
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # GapCue
@@ -114,8 +114,8 @@ node "<skill-dir>/scripts/review.mjs" --status "<scratchpad>/<id>-story.json" --
 ```
 
 If it prints `exists: ...`, ask with AskUserQuestion: **"<ID> was already reviewed (v1…vN). What should I do?"**
-- **New version**: keep the old review and add v(N+1). Decisions and the reviewer's own findings carry over.
-- **Replace the old one**: overwrite vN and start fresh (the old decisions are kept beside it as `state.prev.json`).
+- **New version**: keep the old review and add v(N+1). Decisions, reworded questions and the reviewer's own findings carry over.
+- **Replace the old one**: rebuild vN in place. Decisions, reworded questions and own findings for findings that still exist are kept (a copy of the old decisions is also saved as `state.prev.json`).
 
 Map the answer to `--mode new` or `--mode replace`. If it prints `new: ...`, don't ask and don't pass `--mode`.
 

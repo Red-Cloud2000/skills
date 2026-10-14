@@ -234,14 +234,14 @@ GapCue picks a free port by itself and prints the link.
 
 <details><summary><b>An old review looks different from a new one</b></summary>
 
-Each review keeps the page design it was built with. Re-run the story and choose **New version** or **Replace** to get the latest design.
+Each review keeps the page design it was built with. Re-run the story and choose **New version** or **Replace** to get the latest design; your decisions, reworded questions and own findings are kept.
 </details>
 
 <details><summary><b>Does GapCue send my stories anywhere?</b></summary>
 
-The review page and server run only on your computer (`127.0.0.1`). Once a day at most, the CLI asks GitHub for
-GapCue's latest version number (nothing about your story is sent) so it can tell you when an update is out. To turn
-that off, set `GAPCUE_NO_UPDATE_CHECK=1`. The analysis itself is done by the AI agent
+The review page and server run only on your computer (`127.0.0.1`). Once a day at most, the CLI and the review page
+ask GitHub for GapCue's latest version number (nothing about your story is sent) so they can tell you when an update
+is out. To turn that off, set `GAPCUE_NO_UPDATE_CHECK=1` before building the review. The analysis itself is done by the AI agent
 you already use, under that app's own privacy terms.
 </details>
 

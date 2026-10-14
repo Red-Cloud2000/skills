@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0 - 2026-10-14
+
+### Added
+- **Update notice on the review page**: the footer shows "Update available: X.Y.Z" when a newer release is out
+  (checked at most once a day; `GAPCUE_NO_UPDATE_CHECK=1` turns it off).
+- **Buttons** lift on hover and press in on click; Approved / Out of scope pop when turned on.
+
+### Changed
+- Highlights and the Gap / Contradiction buttons are brighter in the Light and Paper themes; selected text uses the accent colour.
+- The summary cards keep each label on one line ("Contradictions", "Findings to review").
+
+### Fixed
+- **Replace no longer loses your work**: rebuilding a review keeps your decisions, reworded questions and own findings,
+  and a newer copy saved in your browser still wins. New version now carries reworded questions too.
+- **Step through**: closing the popup (Esc or a click outside) brings every highlight back.
+
 ## 0.1.0 - 2026-10-14
 
 First public version.

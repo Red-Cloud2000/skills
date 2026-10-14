@@ -7,8 +7,8 @@
 :root{
   --bg:#f3f7f8; --surface:#ffffff; --surface-2:#eef4f5; --ink:#0d2233; --muted:#566978; --line:#d7e2e6;
   --accent:#0f7f88; --accent-ink:#ffffff;
-  --gap:#8f5b0c; --gap-bg:#fbedcf;
-  --contra:#cc3426; --contra-bg:#fde1dc; --contra-ink:#ffffff;
+  --gap:#8f5b0c; --gap-bg:#fbdf9f;
+  --contra:#cc3426; --contra-bg:#fcc9c1; --contra-ink:#ffffff;
   --ok:#167a49; --ok-bg:#d6f0e1;
   --oos:#6f7d89; --oos-bg:#e7ecef;
   --scrim:rgba(9,25,36,.38);
@@ -46,8 +46,8 @@
 :root[data-theme="paper"]{
   --bg:#f6f1e7; --surface:#fffdf8; --surface-2:#f1ead9; --ink:#2b2418; --muted:#665b47; --line:#e3d8c2;
   --accent:#1d6a66; --accent-ink:#ffffff;
-  --gap:#82550a; --gap-bg:#f7e3bd;
-  --contra:#b02d20; --contra-bg:#f9dcd3; --contra-ink:#ffffff;
+  --gap:#82550a; --gap-bg:#f5d48c;
+  --contra:#b02d20; --contra-bg:#f5c2b4; --contra-ink:#ffffff;
   --ok:#2c733a; --ok-bg:#dcefd6;
   --oos:#7a7062; --oos-bg:#ece5d6;
   --scrim:rgba(43,36,24,.35);
@@ -96,11 +96,14 @@ p{margin:0}
 .step.now small{color:var(--accent);font-weight:600}
 
 /* summary */
-.summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-@media (max-width:760px){.summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* each label stays on one line: cards share the row and grow to fit their label; narrow screens wrap to more rows */
+.summary{display:flex;flex-wrap:wrap;gap:10px}
+.summary .stat{flex:1 1 0;min-width:max-content}
+@media (max-width:760px){.summary .stat{flex-basis:calc(33.33% - 7px);min-width:0}}
+@media (max-width:520px){.summary .stat{flex-basis:calc(50% - 5px)}}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:2px}
 .stat b{font:700 1.5rem/1.1 var(--f-display);font-variant-numeric:tabular-nums}
-.stat span{font-size:.78rem;color:var(--muted)}
+.stat span{font-size:.78rem;color:var(--muted);white-space:nowrap}
 .stat .sw{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:1px}
 
 /* sections */
@@ -156,7 +159,8 @@ td .ar{display:block;color:var(--muted);font-size:.85rem}
 .hl[data-s="oos"]{background:var(--oos-bg);box-shadow:inset 0 -2px 0 var(--oos);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--oos) 60%,transparent)}
 .hl.cur{position:relative;z-index:41;animation:pulse 1.6s ease-in-out infinite}
 .hl.flash{animation:flash .9s ease 2}
-body.focus .hl:not(.cur){background:none;box-shadow:none;cursor:default;pointer-events:none;text-decoration:none}
+/* step through hides the other findings only while one is open; close it and they are all back */
+body.focus.pop-open .hl:not(.cur){background:none;box-shadow:none;cursor:default;pointer-events:none;text-decoration:none}
 @keyframes pulse{0%,100%{outline:2px solid transparent;outline-offset:2px}50%{outline:2px solid color-mix(in srgb,var(--gap) 55%,transparent);outline-offset:3px}}
 .hl.c.cur{animation-name:pulseC}
 @keyframes pulseC{0%,100%{outline:2px solid transparent;outline-offset:2px}50%{outline:2px solid color-mix(in srgb,var(--contra) 60%,transparent);outline-offset:3px}}
@@ -341,8 +345,10 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
 .selbar{position:fixed;z-index:47;display:flex;gap:4px;align-items:center;background:var(--ink);color:var(--bg);border-radius:12px;padding:5px;box-shadow:var(--shadow);font:500 .82rem/1.2 var(--f-body);animation:selIn .18s ease-out;max-width:calc(100vw - 16px)}
 .selbar button{font:600 .82rem/1 var(--f-body);border:0;border-radius:8px;padding:9px 11px;cursor:pointer;background:transparent;color:var(--bg);white-space:nowrap}
 .selbar button:hover,.selbar button:focus-visible{background:color-mix(in srgb,var(--bg) 16%,transparent);outline:none}
-.selbar button.go{background:var(--gap);color:#1b1206}
-.selbar button.go.c{background:var(--contra);color:var(--contra-ink)}
+.selbar button.go{background:#f2b544;color:#1b1206}
+.selbar button.go.c{background:#e5483a;color:#fff}
+.selbar button.go:hover,.selbar button.go:focus-visible{background:#f7c766}
+.selbar button.go.c:hover,.selbar button.go.c:focus-visible{background:#f25e50}
 .selbar button.x2{opacity:.7;padding:9px 8px}
 .selbar span{padding:6px 8px}
 @keyframes selIn{from{opacity:0;translate:0 4px}}
@@ -375,6 +381,22 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
 .gchip.c{background:var(--contra-bg);box-shadow:inset 0 -2px 0 var(--contra)}
 .gchip[data-s="approved"]{background:var(--ok-bg);box-shadow:inset 0 -2px 0 var(--ok)}
 .gchip[data-s="oos"]{background:var(--oos-bg);box-shadow:inset 0 -2px 0 var(--oos);text-decoration:line-through}
+/* buttons: lift on hover, squish on press */
+.btn,.nav button,.seg button,.addbtn,.selbar button,.gchip,.starter,.linkbtn,.theme-btn,.toast button,.x{transition:background .15s,border-color .15s,color .15s,box-shadow .2s,transform .18s cubic-bezier(.34,1.56,.64,1),filter .15s}
+.btn:not(:disabled):hover,.nav button:not(:disabled):hover,.addbtn:hover,.gchip:hover,.starter:hover{transform:translateY(-1px);box-shadow:0 6px 14px -8px color-mix(in srgb,var(--ink) 45%,transparent)}
+.btn:not(:disabled):hover{border-color:var(--accent)}
+.btn.primary:not(:disabled):hover{filter:brightness(1.08)}
+.btn.approve:not(:disabled):hover{border-color:var(--ok)}
+.btn.danger:not(:disabled):hover{border-color:var(--contra)}
+.nav button:not(:disabled):hover{border-color:var(--accent);color:var(--accent)}
+.seg button:not([aria-pressed="true"]):hover{color:var(--ink)}
+.selbar button:hover{transform:translateY(-1px)}
+.btn:not(:disabled):active,.nav button:not(:disabled):active,.seg button:active,.addbtn:active,.selbar button:active,.gchip:active,.starter:active,.linkbtn:active,.theme-btn:active,.x:active{transform:scale(.94);box-shadow:none;transition-duration:.06s}
+.btn[aria-pressed="true"]{animation:press .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes press{40%{transform:scale(1.06)}}
+.made a.upd{color:var(--surface);background:var(--accent);border-radius:999px;padding:3px 9px;text-decoration:none;font-weight:600;animation:press .5s .4s cubic-bezier(.34,1.56,.64,1) both}
+.made a.upd:hover{color:var(--surface);filter:brightness(1.1)}
+.story ::selection,.sec ::selection{background:color-mix(in srgb,var(--accent) 30%,transparent);color:inherit}
 </style></head><body>
 <div class="shell">
 <main class="page">
@@ -517,8 +539,24 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
 (function(){
 const DATA = JSON.parse(document.getElementById("story-data").textContent);
 const $ = s => document.querySelector(s);
-// version + a plain link; the page itself never goes online to check
-$("#made").innerHTML = `GapCue ${String(DATA.gapcue || "").replace(/[^\d.]/g, "")} · <a href="https://github.com/Red-Cloud2000/skills/releases" target="_blank" rel="noopener">Check for updates ↗</a>`;
+// version + link to the releases; at most once a day the page asks GitHub for the latest version number (nothing else is sent)
+const VER = String(DATA.gapcue || "").replace(/[^\d.]/g, ""), RELEASES = "https://github.com/Red-Cloud2000/skills/releases";
+const made = latest => { $("#made").innerHTML = `GapCue ${VER} · ` + (latest
+  ? `<a class="upd" href="${RELEASES}" target="_blank" rel="noopener">Update available: ${latest} ↗</a>`
+  : `<a href="${RELEASES}" target="_blank" rel="noopener">Check for updates ↗</a>`); };
+const newer = (a, b) => { const x = a.split("."), y = b.split("."); for (let i = 0; i < 3; i++) if (+x[i] !== +y[i]) return +x[i] > +y[i]; return false; };
+const showLatest = v => made(/^\d+\.\d+\.\d+$/.test(v || "") && /^\d+\.\d+\.\d+$/.test(VER) && newer(v, VER) ? v : "");
+made("");
+if (!DATA.noUpdateCheck) {
+  let c = null; try { c = JSON.parse(localStorage.getItem("gapcue:latest")); } catch {}
+  if (c && Date.now() - c.at < 864e5) showLatest(c.v);
+  else fetch("https://raw.githubusercontent.com/Red-Cloud2000/skills/main/GapCue/.claude-plugin/plugin.json", {cache: "no-store", signal: AbortSignal.timeout ? AbortSignal.timeout(3000) : undefined})
+    .then(r => r.ok ? r.json() : null).then(j => {
+      const v = j && typeof j.version === "string" ? j.version : "";
+      try { localStorage.setItem("gapcue:latest", JSON.stringify({at: Date.now(), v})); } catch {}
+      showLatest(v);
+    }).catch(() => {}); // offline, blocked, or not public yet: keep the plain link
+}
 const body = document.body;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const norm = s => String(s).replace(/\s+/g, " ").trim();

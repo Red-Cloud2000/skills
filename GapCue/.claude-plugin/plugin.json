@@ -1,7 +1,7 @@
 {
   "name": "gapcue",
   "displayName": "GapCue",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Paste a user story. GapCue helps you spot gaps and contradictions, shows them on an interactive review page, and drafts the questions for your BA.",
   "author": { "name": "Abdelrahman Hesham", "url": "https://github.com/Red-Cloud2000" },
   "homepage": "https://github.com/Red-Cloud2000/skills/tree/main/GapCue",

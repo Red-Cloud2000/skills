@@ -103,6 +103,7 @@ function resolveImages(data, inputDir, imgDir) {
 }
 function renderPage(data) {
   data.gapcue = VERSION;
+  if (process.env.GAPCUE_NO_UPDATE_CHECK || process.env.NO_UPDATE_NOTIFIER) data.noUpdateCheck = true;
   const json = JSON.stringify(data).replace(/</g, "\\u003c");
   return fs.readFileSync(path.join(here, "..", "assets", "template.html"), "utf8").replace("/*__DATA__*/", () => json);
 }
@@ -175,6 +176,7 @@ function build(inputFile) {
   const dir = path.join(storyDir, "v" + version);
   // replace: keep the old decisions next to the new version as state.prev.json (never lose them silently)
   const replaced = mode === "replace" ? readJson(path.join(dir, "state.json")) : null;
+  const oldFindings = mode === "replace" ? (readJson(path.join(dir, "story.json")) || {}).findings || [] : [];
   if (mode === "replace") fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(path.join(dir, "img"), { recursive: true });
   if (replaced) writeAtomic(path.join(dir, "state.prev.json"), JSON.stringify(replaced, null, 2));
@@ -184,20 +186,24 @@ function build(inputFile) {
   data.reviewedAt = new Date().toISOString().slice(0, 10);
   checkAnchors(data);
 
-  // new version: carry over decisions for findings that still exist, and the reviewer's own findings (re-anchored by the page)
+  // new version or replace: carry over decisions and rewordings for findings that still exist, and the reviewer's
+  // own findings (re-anchored by the page). A hand-edited comment is kept when the findings did not change.
   const ids = new Set((data.findings || []).map(f => f.id));
-  const prev = mode === "new" ? readJson(path.join(storyDir, "v" + prevVersion, "state.json")) : null;
+  const prev = mode === "new" ? readJson(path.join(storyDir, "v" + prevVersion, "state.json")) : replaced;
   const custom = prev && Array.isArray(prev.custom) ? prev.custom : [];
   for (const c of custom) ids.add(c.id);
-  const status = {};
-  if (prev) for (const [k, v] of Object.entries(prev.status || {})) if (ids.has(k)) status[k] = v;
-  writeState(dir, { schema: 2, status, custom, mode: "all", cur: 0, comment: null, dirty: false, updatedAt: Date.now() });
+  const pick = obj => Object.fromEntries(Object.entries(obj && typeof obj === "object" ? obj : {}).filter(([k]) => ids.has(k)));
+  const status = pick(prev?.status), qEdit = pick(prev?.qEdit);
+  const sameFindings = prev && mode === "replace" && JSON.stringify(oldFindings) === JSON.stringify(data.findings || []);
+  const comment = sameFindings && prev.dirty ? prev.comment : null;
+  // updatedAt stays the old one: a browser copy edited after the last save to disk is newer and still wins on load
+  writeState(dir, { schema: 2, status, custom, qEdit, mode: "all", cur: 0, comment, dirty: !!comment, updatedAt: prev?.updatedAt || 0 });
 
   writeAtomic(path.join(dir, "story.json"), JSON.stringify(data, null, 2));
   writeAtomic(path.join(dir, "index.html"), renderPage(data));
   writeHistory();
-  const carried = prev ? `, carried over from v${prevVersion}: ${Object.keys(status).length} decision(s), ${custom.length} own finding(s)` : "";
-  console.log(`saved: ${path.join(dir, "index.html")}  (v${version}${carried}${replaced ? "; old decisions kept in state.prev.json" : ""})`);
+  const carried = prev ? `, ${mode === "new" ? "carried over from v" + prevVersion : "kept"}: ${Object.keys(status).length} decision(s), ${custom.length} own finding(s), ${Object.keys(qEdit).length} reworded question(s)` : "";
+  console.log(`saved: ${path.join(dir, "index.html")}  (v${version}${carried}${replaced ? "; a copy of the old decisions is in state.prev.json" : ""})`);
   return `${slug}/v${version}/index.html`;
 }
 
