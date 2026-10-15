@@ -242,11 +242,53 @@ body.side.pop-open .shell{padding-right:440px}
 .q-edit:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .q-edit[hidden],#qForm[hidden]{display:none}
 #qForm{display:grid;gap:8px;margin-right:-27px}
-#qText{font:400 .9rem/1.45 var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:8px 10px;width:100%;resize:vertical}
-#qText:focus{outline:2px solid color-mix(in srgb,var(--accent) 45%,transparent)}
-.q-acts{display:flex;gap:6px;justify-content:flex-end}
+#qText{font:400 .9rem/1.45 var(--f-body);color:var(--ink);padding:8px 10px;width:100%;min-height:4.4em;max-height:24em;overflow:auto}
+.q-acts{display:flex;gap:6px;justify-content:flex-end;align-items:center}
+/* rich text: questions and the BA comment keep bold, italic, underline, colours, nested lists and tables */
+.rich{white-space:pre-wrap;overflow-wrap:anywhere;cursor:text}
+.rich strong,.rich b,#popQ strong,#popQ b{font-weight:700}
+.rich:empty::before{content:attr(data-placeholder);color:var(--muted)}
+.rich p,#popQ p{margin:0}
+.rich ul,.rich ol,#popQ ul,#popQ ol{margin:.25em 0;padding-left:1.4em}
+.rich ul ul,#popQ ul ul{list-style:circle}
+.rich ul ul ul,#popQ ul ul ul{list-style:square}
+.rich table,#popQ table{border-collapse:collapse;margin:.4em 0;max-width:100%;white-space:normal}
+.rich td,.rich th,#popQ td,#popQ th{border:1px solid var(--muted);padding:4px 8px;min-width:3em;vertical-align:top;text-align:left}
+.rich th,#popQ th{background:var(--surface-2);font-family:var(--f-body);font-size:inherit;font-weight:700;text-transform:none;letter-spacing:normal;color:var(--ink)}
+.rich [style*="background-color"],#popQ [style*="background-color"]{color:#1b1b1b}
+/* editor frame: toolbar on top, text below (WordPress style); the second toolbar row opens with the ⌄ button */
+.rbox{border:1px solid var(--line);border-radius:12px;background:var(--surface);transition:border-color .2s,box-shadow .2s,background .2s}
+.rbox:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.rbox>.rich{outline:none;border:0;background:transparent}
+.fmt{position:relative;padding:4px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--accent) 4%,var(--surface));border-radius:11px 11px 0 0}
+.fmt[hidden]{display:none}
+.fmt-row{display:flex;align-items:center;gap:1px;flex-wrap:wrap}
+.fmt .sep{width:1px;height:18px;background:var(--line);margin:0 4px}
+.fmt button{min-width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:600 .85rem/1 var(--f-body);cursor:pointer;padding:0 7px;display:inline-grid;place-items:center;transition:background .15s,color .15s,transform .15s cubic-bezier(.34,1.56,.64,1)}
+.fmt button:hover{background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--accent);transform:translateY(-1px)}
+.fmt button:active{transform:scale(.88)}
+.fmt button.on{background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--accent)}
+.fmt button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.fmt .more{margin-left:auto;width:30px;padding:0;color:var(--muted)}
+.fmt .more svg{width:16px;height:16px;transition:rotate .35s cubic-bezier(.34,1.56,.64,1)}
+.fmt.open .more{color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent)}
+.fmt.open .more svg{rotate:180deg}
+.fmt-more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s cubic-bezier(.2,.8,.2,1)}
+.fmt.open .fmt-more{grid-template-rows:1fr}
+.fmt-in{overflow:hidden;min-height:0}
+.fmt-more .fmt-row{margin-top:4px;padding-top:4px;border-top:1px dashed var(--line)}
+.fmt-more .fmt-row button{min-width:27px;padding:0 5px;font-size:.76rem}
+.fmt-more .sep{margin:0 2px}
+.fmt-more button{opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .3s cubic-bezier(.34,1.56,.64,1),background .15s,color .15s}
+.fmt.open .fmt-more button{opacity:1;transform:none;transition-delay:calc(var(--i) * 22ms),calc(var(--i) * 22ms),0s,0s}
+.fmt.open .fmt-more button:hover{transform:translateY(-1px);transition-delay:0s}
+.fmt .pal{position:absolute;top:calc(100% + 4px);z-index:30;display:grid;grid-template-columns:repeat(6,24px);gap:4px;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgb(0 0 0 / .18);transform-origin:top left;animation:palIn .18s cubic-bezier(.34,1.56,.64,1)}
+@keyframes palIn{from{opacity:0;transform:scale(.9) translateY(-4px)}}
+.fmt .pal[hidden]{display:none}
+.fmt .pal button{min-width:24px;width:24px;height:24px;padding:0;border:1px solid var(--line);border-radius:6px}
+.fmt .pal button:hover{transform:scale(1.15)}
 .q .eyebrow{color:var(--accent)}
-.q p{font-size:.9rem}
+.q p,#popQ{font-size:.9rem}
 .decide{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .btn{font:600 .88rem/1 var(--f-body);padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s,color .15s}
 .btn:hover{border-color:var(--muted)}
@@ -258,9 +300,13 @@ body.side.pop-open .shell{padding-right:440px}
 .hint{font-size:.76rem;color:var(--muted)}
 
 /* composer */
-.composer textarea{width:100%;min-height:220px;resize:vertical;font:400 .9rem/1.6 var(--f-body);color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px;transition:border-color .2s, background .2s}
-.composer textarea[readonly]{cursor:default}
-.composer textarea:not([readonly]){background:var(--surface);border-color:var(--accent);outline:3px solid color-mix(in srgb,var(--accent) 18%,transparent)}
+#cText{width:100%;min-height:220px;max-height:70vh;overflow:auto;white-space:normal;font:400 .9rem/1.6 var(--f-body);color:var(--ink);padding:14px}
+#cText p{margin:0;min-height:1.6em}
+#cText ul,#cText ol{margin:.25em 0 .5em;padding-left:1.5em}
+#cText li{margin:.2em 0}
+#cText[contenteditable="false"]{cursor:default}
+#cBox:has(#cText[contenteditable="false"]){background:var(--surface-2)}
+#cBox:has(#cText[contenteditable="true"]){border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
 .composer .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .composer .tools .hint{margin-left:auto}
 .empty{font-size:.85rem;color:var(--muted);background:var(--surface-2);border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
@@ -361,6 +407,8 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
 .fld{display:grid;gap:5px;font:600 .74rem var(--f-body);color:var(--muted)}
 .fld .opt{font-weight:400;opacity:.8;margin-left:4px}
 .fld input,.fld textarea{font:400 .9rem/1.45 var(--f-body);color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;resize:vertical}
+.fld .rich{font:400 .9rem/1.45 var(--f-body);color:var(--ink);padding:9px 11px;min-height:4.6em;max-height:12em;overflow:auto}
+.fld .rbox>.rich{border-radius:0 0 11px 11px}
 .fld input:focus,.fld textarea:focus{outline:2px solid color-mix(in srgb,var(--accent) 45%,transparent);border-color:var(--accent)}
 .req-q{color:var(--accent)}
 .starters{display:flex;flex-wrap:wrap;gap:6px;margin-top:-4px}
@@ -422,8 +470,9 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
   <section class="sec composer rise" id="comment">
     <div class="sec-head"><h2>Comment to the Business Analyst</h2><span class="eyebrow" id="cCount">0 points</span></div>
     <p class="empty" id="cEmpty">Approve a finding and its question is added here as a bullet.</p>
-    <label for="cText" class="eyebrow">Comment text</label>
-    <textarea id="cText" readonly spellcheck="true"></textarea>
+    <span class="eyebrow" id="cLabel">Comment text</span>
+    <div class="rbox" id="cBox"><div class="fmt" id="cFmt" hidden role="toolbar" aria-label="Formatting"></div>
+      <div id="cText" class="rich" contenteditable="false" role="textbox" aria-multiline="true" aria-labelledby="cLabel" spellcheck="true"></div></div>
     <div class="tools">
       <button class="btn" id="cEdit" type="button" aria-pressed="false">Edit</button>
       <button class="btn primary" id="cCopy" type="button">Copy comment</button>
@@ -459,10 +508,11 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
   <div id="popView">
     <p class="why" id="popWhy"></p>
     <div class="parts" id="popParts"></div>
-    <div class="q"><span class="eyebrow">Question for the BA</span><p id="popQ"></p>
+    <div class="q"><span class="eyebrow">Question for the BA</span><div id="popQ"></div>
       <button class="q-edit" id="qEdit" type="button" aria-label="Edit question" title="Edit question">✎</button>
       <div id="qForm" hidden>
-        <textarea id="qText" rows="3" aria-label="Question for the BA"></textarea>
+        <div class="rbox"><div class="fmt" role="toolbar" aria-label="Formatting"></div>
+          <div id="qText" class="rich" contenteditable="true" role="textbox" aria-label="Question for the BA"></div></div>
         <div class="q-acts"><button class="btn small" id="qCancel" type="button">Cancel</button><button class="btn small primary" id="qSave" type="button">Save</button></div>
       </div>
     </div>
@@ -488,7 +538,9 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
       <button class="linkbtn" id="nfMore" type="button" hidden>＋ Add point B</button>
       <label class="fld">Title <input id="nfTitle" type="text" maxlength="120"></label>
       <label class="fld"><span>What's wrong <span class="opt">optional</span></span><textarea id="nfWhy" rows="2"></textarea></label>
-      <label class="fld req-q">Question for the BA <textarea id="nfQ" rows="3" placeholder="Write the question you want answered"></textarea></label>
+      <div class="fld req-q"><span id="nfQLabel">Question for the BA</span>
+        <div class="rbox"><div class="fmt" role="toolbar" aria-label="Formatting"></div>
+          <div id="nfQ" class="rich" contenteditable="true" role="textbox" aria-labelledby="nfQLabel" data-placeholder="Write the question you want answered"></div></div></div>
       <div class="starters" id="nfStarters" aria-label="Question starters"></div>
       <div class="decide">
         <button class="btn" id="nfCancel" type="button">Cancel</button>
@@ -790,7 +842,7 @@ function open(id){
   $("#popTitle").textContent = it.draft ? (it.kind === "contra" ? "New contradiction" : "New gap") : it.title;
   $("#popWhy").textContent = it.why || "";
   $("#popWhy").hidden = !it.why;
-  $("#popQ").textContent = it.q;
+  $("#popQ").innerHTML = htmlOf(it.q);
   const pts = pointsOf(id);
   // "Points" chips: where each highlighted part is; same letters as the arrows
   const ptsEl = $("#popPts"); ptsEl.innerHTML = "";
@@ -907,7 +959,7 @@ $("#scrim").addEventListener("click", close);
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && themeMenu(false, true)) return;
   if (e.key === "Escape") { if (qEditing) cancelQ(); else close(); }
-  if (st.mode === "step" && !/TEXTAREA|INPUT/.test(document.activeElement.tagName) && !$("#theme").contains(document.activeElement)) {
+  if (st.mode === "step" && !/TEXTAREA|INPUT/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable &&!$("#theme").contains(document.activeElement)) {
     if (e.key === "ArrowRight") step(1);
     if (e.key === "ArrowLeft") step(-1);
   }
@@ -1114,20 +1166,238 @@ function stopLoop(){ cancelAnimationFrame(raf); }
 function setSide(){ body.classList.toggle("side", innerWidth >= 1180); if (openId) placeSoon(); }
 setSide(); addEventListener("resize", setSide);
 
+/* ---------- rich text ----------
+   Questions and the BA comment are stored as clean HTML: bold, italic, underline, strikethrough, text and highlight
+   colours, nested lists and tables. Older reviews stored text with **bold**, *italic*, "• " bullets and "1. " numbers
+   (\* = a real asterisk); that still loads and is turned into HTML. */
+function escHtml(s){ return String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c])); }
+function mdInline(s){
+  return escHtml(String(s || "")).replace(/\\\*/g, "\u0001").replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>").replace(/\u0001/g, "*");
+}
+function mdBlocks(md){
+  let html = "", list = null;
+  const end = () => { if (list) html += `</${list}>`; list = null; };
+  for (const line of String(md || "").split("\n")) {
+    const m = /^(?:([•\-]) |(\d+)\. )(.*)$/.exec(line), kind = m ? (m[1] ? "ul" : "ol") : null;
+    if (kind !== list) { end(); if (kind) html += `<${list = kind}>`; }
+    html += kind ? `<li>${mdInline(m[3])}</li>` : `<p>${line.trim() ? mdInline(line) : "<br>"}</p>`;
+  }
+  end(); return html;
+}
+// new form = HTML; it may start with plain text ("Is the <b>limit</b> …"), so look for any tag the editor keeps
+const isHtml = s => /<\/?(p|br|b|strong|i|em|u|s|strike|span|ul|ol|li|table|thead|tbody|tr|td|th)\b[^>]*>/i.test(s || "");
+const frag = h => { const t = document.createElement("template"); t.innerHTML = h || ""; return t; };
+const textOf = h => frag(h).content.textContent.replace(/\s+/g, " ").trim();
+// only formatting survives: scripts, links, images, classes and other attributes are dropped
+const KEEP = /^(P|BR|B|STRONG|I|EM|U|S|STRIKE|SPAN|UL|OL|LI|TABLE|THEAD|TBODY|TR|TD|TH)$/;
+const COLOR_CSS = /^(color|background-color)$/, FONT_CSS = /^(font-weight|font-style|text-decoration-line)$/;
+function clean(html, noColors){
+  const t = frag(html);
+  (function walk(el){
+    for (const n of [...el.childNodes]) {
+      if (n.nodeType === 3) continue;
+      if (n.nodeType !== 1 || /^(SCRIPT|STYLE|TEMPLATE|IFRAME|OBJECT|EMBED|SVG|MATH|IMG|INPUT|BUTTON|SELECT|TEXTAREA|HEAD|TITLE|META|LINK)$/i.test(n.nodeName)) { n.remove(); continue; }
+      walk(n);
+      let tag = n.nodeName;
+      if (/^(DIV|H[1-6]|BLOCKQUOTE|PRE)$/.test(tag)) tag = n.querySelector("p,div,ul,ol,table") ? "" : "P";
+      else if (tag === "FONT") tag = "SPAN";
+      else if (!KEEP.test(tag)) tag = "";
+      if (!tag) { n.replaceWith(...n.childNodes); continue; }
+      const out = document.createElement(tag), css = [];
+      for (const p of n.style || []) {
+        const v = n.style.getPropertyValue(p);
+        if ((FONT_CSS.test(p) || (!noColors && COLOR_CSS.test(p))) && /^[#\w\s(),.%-]+$/.test(v) && !/url|expression/i.test(v)) css.push(p + ":" + v);
+      }
+      const fc = n.nodeName === "FONT" && n.getAttribute("color");
+      if (fc && !noColors && /^#?\w+$/.test(fc)) css.push("color:" + fc);
+      if (css.length) out.setAttribute("style", css.join(";"));
+      for (const a of ["colspan", "rowspan"]) if (/^\d+$/.test(n.getAttribute(a) || "")) out.setAttribute(a, n.getAttribute(a));
+      if (tag === "LI" && /^[\w-]+$/.test(n.getAttribute("data-q") || "")) out.setAttribute("data-q", n.getAttribute("data-q"));
+      out.append(...n.childNodes);
+      if (tag === "SPAN" && !out.attributes.length) n.replaceWith(...out.childNodes); else n.replaceWith(out);
+    }
+  })(t.content);
+  return t.innerHTML.replace(/(<p>(<br>)?<\/p>)+$/, "").trim();
+}
+const htmlOf = q => isHtml(q) ? clean(q) : mdInline(q); // a question, old or new form
+// rich text to plain text (• bullets, indented sub-bullets, " | " between table cells) for apps that take no HTML
+function plainOf(h){
+  const out = [];
+  (function walk(n, depth){
+    for (const c of n.childNodes) {
+      if (c.nodeType === 3) { out.push(c.nodeValue); continue; }
+      if (c.nodeType !== 1) continue;
+      const tag = c.nodeName, pad = "  ".repeat(depth);
+      if (tag === "BR") out.push("\n" + pad);
+      else if (tag === "LI") { const p = c.parentElement; out.push("\n" + pad + (p && p.nodeName === "OL" ? [...p.children].indexOf(c) + 1 + ". " : "• ")); walk(c, depth + 1); }
+      else if (tag === "TR") { out.push("\n" + pad); [...c.cells].forEach((cell, k) => { if (k) out.push(" | "); walk(cell, depth); }); }
+      else if (tag === "P" || tag === "TABLE") { out.push("\n" + pad); walk(c, depth); }
+      else walk(c, depth);
+    }
+  })(frag(h).content, 0);
+  return out.join("").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+// give a contenteditable box a textarea-like .value (clean HTML), so the rest of the page reads it the same way
+function richBox(el){
+  Object.defineProperty(el, "value", {
+    get: () => { const h = clean(el.innerHTML); return textOf(h) || /<table/i.test(h) ? h : ""; },
+    set: v => { el.innerHTML = isHtml(v) ? clean(v) : mdBlocks(v); }
+  });
+  // pasted text keeps its structure (lists, tables, bold) but not its colours, which may not read on this page
+  el.addEventListener("paste", e => {
+    const d = e.clipboardData; if (!d) return;
+    e.preventDefault();
+    const h = d.getData("text/html");
+    document.execCommand("insertHTML", false, h ? clean(h, true) : escHtml(d.getData("text/plain")).replace(/\r?\n/g, "<br>"));
+  });
+  el.addEventListener("keydown", e => {
+    if (e.key !== "Tab" || e.ctrlKey || e.altKey || e.metaKey) return;
+    const cell = caretIn("td,th", el), li = caretIn("li", el);
+    if (cell) { e.preventDefault(); tabCell(cell, e.shiftKey, el); }
+    else if (li) { e.preventDefault(); moveLi(li, e.shiftKey, el); }
+  });
+}
+function caretEnd(el){ el.focus({preventScroll: true}); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+function caretIn(sel, box){
+  const s = getSelection(); if (!s.rangeCount) return null;
+  const n = s.anchorNode, el = n && (n.nodeType === 3 ? n.parentElement : n), hit = el && el.closest(sel);
+  return hit && box.contains(hit) ? hit : null;
+}
+const changed = box => box.dispatchEvent(new Event("input", {bubbles: true}));
+function caretTo(node, start){ const r = document.createRange(); r.selectNodeContents(node); r.collapse(start); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+// Tab / Shift+Tab on a bullet: make it a sub-bullet of the one above, or move it back out one level
+function moveLi(li, out, box){
+  const s = getSelection(), r = s.rangeCount ? s.getRangeAt(0) : null, keep = r && [r.startContainer, r.startOffset];
+  const list = li.parentElement;
+  if (!out) {
+    const prev = li.previousElementSibling; if (!prev) { toast("The first bullet can't be a sub-bullet. Put the cursor in a bullet below it."); return; }
+    let sub = prev.lastElementChild;
+    if (!sub || !/^(UL|OL)$/.test(sub.nodeName)) { sub = document.createElement(list.nodeName); prev.appendChild(sub); }
+    sub.appendChild(li);
+  } else {
+    const parentLi = list.parentElement && list.parentElement.closest("li");
+    if (!parentLi || list.parentElement !== parentLi) { document.execCommand("outdent"); changed(box); return; }
+    const after = []; for (let n = li.nextElementSibling; n; n = n.nextElementSibling) after.push(n);
+    if (after.length) { const sub = document.createElement(list.nodeName); sub.append(...after); li.appendChild(sub); }
+    parentLi.after(li);
+    if (!list.children.length) list.remove();
+  }
+  if (keep) { const k = document.createRange(); k.setStart(...keep); k.collapse(true); s.removeAllRanges(); s.addRange(k); }
+  changed(box);
+}
+function tabCell(cell, back, box){
+  const cells = [...cell.closest("table").querySelectorAll("td,th")], i = cells.indexOf(cell);
+  if (back) { if (i > 0) caretTo(cells[i - 1], false); return; }
+  if (i < cells.length - 1) { caretTo(cells[i + 1], false); return; }
+  tableCmd("row+", box); caretTo(cell.parentElement.nextElementSibling.cells[0], true);
+}
+function tableCmd(cmd, box){
+  if (cmd === "table") {
+    const row = tag => "<tr>" + `<${tag}><br></${tag}>`.repeat(3) + "</tr>";
+    document.execCommand("insertHTML", false, `<table><tbody>${row("th")}${row("td")}</tbody></table><p><br></p>`);
+    return;
+  }
+  const cell = caretIn("td,th", box);
+  if (!cell) { toast("Put the cursor in a table cell first"); return; }
+  const tr = cell.parentElement, table = cell.closest("table"), i = cell.cellIndex;
+  const blank = name => { const c = document.createElement(name); c.innerHTML = "<br>"; return c; };
+  if (cmd === "row+") { const n = document.createElement("tr"); [...tr.cells].forEach(() => n.appendChild(blank("td"))); tr.after(n); }
+  if (cmd === "col+") [...table.rows].forEach(r => { const ref = r.cells[Math.min(i, r.cells.length - 1)]; const c = blank(ref && ref.nodeName === "TH" ? "th" : "td"); ref ? ref.after(c) : r.appendChild(c); });
+  if (cmd === "row-") tr.remove();
+  if (cmd === "col-") [...table.rows].forEach(r => r.cells[i] && r.cells[i].remove());
+  if (!table.querySelector("td,th")) table.remove();
+  changed(box);
+}
+/* toolbar: the same buttons on every rich box (question, own finding, BA comment) */
+const COLORS = ["#d13438", "#ca5010", "#986f0b", "#107c10", "#038387", "#0078d4", "#5c2e91", "#8764b8", "#c30052", "#69797e"];
+const MARKS = ["#fff100", "#ffd8a8", "#ffc7ce", "#c6efce", "#bdd7ee", "#e2d0f5", "#d9d9d9"];
+const TOOLS = [["bold", "<b>B</b>", "Bold (Ctrl+B)"], ["italic", "<i>I</i>", "Italic (Ctrl+I)"], ["underline", "<u>U</u>", "Underline (Ctrl+U)"],
+  ["strikeThrough", "<s>S</s>", "Strikethrough"], "|",
+  ["color", "<span style='border-bottom:3px solid #d13438;padding:0 2px'>A</span>", "Text colour"],
+  ["mark", "<span style='background:#fff100;color:#1b1b1b;padding:0 3px;border-radius:3px'>A</span>", "Highlight"], "|",
+  ["insertUnorderedList", "•", "Bulleted list"], ["insertOrderedList", "1.", "Numbered list"]];
+// second row, opened with ⌄: sub-bullets, tables, clear
+const MORE = [["outdent", "⇤", "Move bullet out (Shift+Tab)"], ["indent", "⇥", "Make sub-bullet (Tab)"], "|",
+  ["table", "⊞", "Insert table"], ["row+", "+Row", "Add row below"], ["col+", "+Col", "Add column right"],
+  ["row-", "−Row", "Delete row"], ["col-", "−Col", "Delete column"], "|", ["removeFormat", "⌫", "Clear formatting"]];
+const STATE_CMDS = ["bold", "italic", "underline", "strikeThrough", "insertUnorderedList", "insertOrderedList"];
+let fmtOpen = false; try { fmtOpen = localStorage.getItem("gapcue:fmtMore") === "1"; } catch(e){}
+const pal = (forCmd, cmd, list, none) => `<div class="pal" data-for="${forCmd}" hidden>` +
+  list.map(c => `<button type="button" data-cmd="${cmd}" data-val="${c}" title="${c}" aria-label="Colour ${c}" style="background:${c}"></button>`).join("") +
+  `<button type="button" data-cmd="${cmd}" data-val="${none}" title="None" aria-label="No colour">✕</button></div>`;
+const toolBtns = list => list.map((t, i) => t === "|" ? `<span class="sep"></span>` :
+  `<button type="button" data-cmd="${t[0]}" title="${t[2]}" aria-label="${t[2]}" style="--i:${i}">${t[1]}</button>`).join("");
+document.querySelectorAll(".fmt").forEach((bar, k) => {
+  bar.dataset.box = "#" + bar.parentElement.querySelector(".rich").id;
+  bar.innerHTML = `<div class="fmt-row">${toolBtns(TOOLS)}<button type="button" class="more" aria-controls="fmtMore${k}" title="More formatting" aria-label="More formatting">` +
+    `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button></div>` +
+    `<div class="fmt-more" id="fmtMore${k}"><div class="fmt-in"><div class="fmt-row">${toolBtns(MORE)}</div></div></div>` +
+    pal("color", "foreColor", COLORS, "inherit") + pal("mark", "hiliteColor", MARKS, "transparent");
+});
+// ⌄ opens the second row on every editor at once; the choice is remembered
+function setFmtMore(open, keep){
+  fmtOpen = open;
+  if (!keep) try { localStorage.setItem("gapcue:fmtMore", open ? "1" : "0"); } catch(e){}
+  document.querySelectorAll(".fmt").forEach(bar => {
+    bar.classList.toggle("open", open);
+    bar.querySelector(".more").setAttribute("aria-expanded", open);
+    bar.querySelectorAll(".fmt-more button").forEach(b => { b.tabIndex = open ? 0 : -1; });
+  });
+}
+setFmtMore(fmtOpen, true);
+// light up B / I / U / S / lists where the cursor is
+document.addEventListener("selectionchange", () => {
+  const n = getSelection().anchorNode, el = n && (n.nodeType === 3 ? n.parentElement : n), box = el && el.closest ? el.closest(".rbox") : null;
+  document.querySelectorAll(".fmt button.on").forEach(b => { if (!box || !box.contains(b)) b.classList.remove("on"); });
+  if (!box) return;
+  for (const c of STATE_CMDS) { let on = false; try { on = document.queryCommandState(c); } catch(e){} const b = box.querySelector(`.fmt [data-cmd="${c}"]`); if (b) b.classList.toggle("on", on); }
+});
+try { document.execCommand("defaultParagraphSeparator", false, "p"); } catch(e){}
+// toolbar buttons keep the text selection (mousedown) and format it
+document.addEventListener("mousedown", e => { if (e.target.closest(".fmt button")) e.preventDefault(); });
+document.addEventListener("click", e => {
+  if (e.target.closest(".fmt .more")) { setFmtMore(!fmtOpen); return; }
+  const b = e.target.closest(".fmt button[data-cmd]"), cmd = b && b.dataset.cmd;
+  document.querySelectorAll(".fmt .pal").forEach(p => { if (!b || p.dataset.for !== cmd) p.hidden = true; });
+  if (!b) return;
+  const bar = b.closest(".fmt"), box = $(bar.dataset.box);
+  if (box.contentEditable !== "true") return;
+  if (!box.contains(getSelection().anchorNode)) caretEnd(box);
+  if (cmd === "color" || cmd === "mark") { const p = bar.querySelector(`.pal[data-for="${cmd}"]`); p.style.left = b.offsetLeft + "px"; p.style.top = (b.offsetTop + b.offsetHeight + 4) + "px"; p.hidden = !p.hidden; return; }
+  if (cmd === "foreColor" || cmd === "hiliteColor") {
+    document.execCommand("styleWithCSS", false, true); document.execCommand(cmd, false, b.dataset.val); document.execCommand("styleWithCSS", false, false);
+  } else if (cmd === "indent" || cmd === "outdent") { const li = caretIn("li", box); if (li) moveLi(li, cmd === "outdent", box); else toast("Put the cursor in a bullet first"); }
+  else if (/^(table|row|col)/.test(cmd)) tableCmd(cmd, box);
+  else document.execCommand(cmd);
+  changed(box);
+});
+richBox($("#qText")); richBox($("#nfQ"));
+
 /* ---------- decisions + composer ---------- */
 const ta = $("#cText");
-const lineOf = id => "• " + ISSUES[id].q;
-const generate = () => INTRO + "\n\n" + order.filter(g => st.status[g] === "approved").map(lineOf).join("\n");
-// keep the BA comment in step with decisions; a hand-edited comment is only touched line by line
+richBox(ta);
+// each approved question is one bullet, tagged with its finding so a hand-edited comment can still be updated
+const liOf = id => { const h = htmlOf(ISSUES[id].q), one = /^<p>((?:(?!<\/?p>)[\s\S])*)<\/p>$/.exec(h); return `<li data-q="${escHtml(id)}">${one ? one[1] : h}</li>`; };
+const generate = () => {
+  const ids = order.filter(g => st.status[g] === "approved");
+  return INTRO.split("\n").map(l => `<p>${l.trim() ? mdInline(l) : "<br>"}</p>`).join("") + "<p><br></p>" + (ids.length ? `<ul>${ids.map(liOf).join("")}</ul>` : "");
+};
+// keep the BA comment in step with decisions; a hand-edited comment is only touched bullet by bullet
 function syncComment(change){
   let ok = true;
   if (!st.dirty) { st.comment = generate(); }
   else {
-    let lines = (st.comment || "").split("\n");
-    if (change.remove) lines = lines.filter(l => l !== change.remove);
-    if (change.replace) { const i = lines.indexOf(change.replace[0]); if (i >= 0) lines[i] = change.replace[1]; else ok = false; }
-    if (change.add && !lines.includes(change.add)) { while (lines.length && !lines[lines.length - 1].trim()) lines.pop(); lines.push(change.add); }
-    st.comment = lines.join("\n");
+    const t = frag(st.comment), find = id => t.content.querySelector(`li[data-q="${CSS.escape(id)}"]`);
+    if (change.remove) { const li = find(change.remove); if (li) li.remove(); }
+    if (change.replace) { const li = find(change.replace); if (li) li.outerHTML = liOf(change.replace); else ok = false; }
+    if (change.add && !find(change.add)) {
+      let last = t.content.lastElementChild;
+      while (last && last.nodeName === "P" && !last.textContent.trim()) { last.remove(); last = t.content.lastElementChild; }
+      if (!last || last.nodeName !== "UL") { last = document.createElement("ul"); t.content.appendChild(last); }
+      last.insertAdjacentHTML("beforeend", liOf(change.add));
+    }
+    st.comment = t.innerHTML;
   }
   ta.value = st.comment;
   return ok;
@@ -1137,7 +1407,7 @@ function setStatus(id, s, quiet){
   const prev = st.status[id];
   const next = prev === s ? null : s;
   if (next) st.status[id] = next; else delete st.status[id];
-  syncComment({remove: prev === "approved" && next !== "approved" ? lineOf(id) : null, add: next === "approved" ? lineOf(id) : null});
+  syncComment({remove: prev === "approved" && next !== "approved" ? id : null, add: next === "approved" ? id : null});
   save(); paint();
   if (!quiet) toast(next === "approved" ? "Added to the comment" : next === "oos" ? "Marked out of scope" : "Choice cleared");
 }
@@ -1146,7 +1416,7 @@ $("#bOos").addEventListener("click", () => openId && setStatus(openId, "oos"));
 
 /* ---------- edit the question for the BA in place ---------- */
 const setDecide = on => { $("#bApprove").disabled = $("#bOos").disabled = !on; };
-const qClean = () => $("#qText").value.replace(/\s+/g, " ").trim(); // one line, so it stays one comment line
+const qVal = () => $("#qText").value;
 function cancelQ(quiet){
   if (!qEditing) return;
   qEditing = null;
@@ -1154,44 +1424,64 @@ function cancelQ(quiet){
   if (!quiet) $("#qEdit").focus({preventScroll: true});
 }
 function saveQ(){
-  const id = qEditing, it = ISSUES[id], q = qClean();
+  const id = qEditing, it = ISSUES[id], q = qVal();
   if (!it || !q) return;
-  if (q === it.q) { cancelQ(); return; }
-  const oldLine = lineOf(id);
+  if (q === htmlOf(it.q)) { cancelQ(); return; }
   it.q = q;
   if (it.own) it.updatedAt = Date.now(); else st.qEdit[id] = q;
-  const ok = st.status[id] === "approved" ? syncComment({replace: [oldLine, lineOf(id)]}) : true;
-  save(); $("#popQ").textContent = q; cancelQ();
+  const ok = st.status[id] === "approved" ? syncComment({replace: id}) : true;
+  save(); $("#popQ").innerHTML = htmlOf(q); cancelQ();
   toast("Question saved." + (ok ? "" : REBUILD));
 }
 $("#qEdit").addEventListener("click", () => {
   const it = ISSUES[openId]; if (!it) return;
   qEditing = openId;
   const t = $("#qText"); t.value = it.q;
-  t.rows = Math.min(8, Math.max(3, Math.ceil(it.q.length / 60)));
   $("#popQ").hidden = true; $("#qEdit").hidden = true; $("#qForm").hidden = false; setDecide(false);
-  $("#qSave").disabled = !qClean();
-  t.focus({preventScroll: true}); t.setSelectionRange(t.value.length, t.value.length);
+  $("#qSave").disabled = !qVal();
+  caretEnd(t);
 });
-$("#qText").addEventListener("input", () => { $("#qSave").disabled = !qClean(); });
+$("#qText").addEventListener("input", () => { $("#qSave").disabled = !qVal(); });
 $("#qText").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveQ(); } });
 $("#qCancel").addEventListener("click", () => cancelQ());
 $("#qSave").addEventListener("click", saveQ);
-if (st.comment == null) st.comment = generate();
+if (st.comment == null || !st.dirty) st.comment = generate();
+else if (!isHtml(st.comment)) {
+  // a hand-edited comment from an older review (text with • bullets): turn it into HTML and re-tag its bullets
+  const t = frag(mdBlocks(st.comment));
+  t.content.querySelectorAll("li").forEach(li => {
+    const id = order.find(g => st.status[g] === "approved" && textOf(htmlOf(ISSUES[g].q)) === li.textContent.replace(/\s+/g, " ").trim());
+    if (id) li.setAttribute("data-q", id);
+  });
+  st.comment = t.innerHTML;
+}
 ta.value = st.comment;
 $("#cEdit").addEventListener("click", () => {
-  const editing = ta.readOnly;
-  ta.readOnly = !editing;
+  const editing = ta.contentEditable !== "true";
+  ta.contentEditable = editing;
+  $("#cFmt").hidden = !editing;
   $("#cEdit").textContent = editing ? "Done" : "Edit";
   $("#cEdit").setAttribute("aria-pressed", editing);
-  $("#cHint").textContent = editing ? "Editing. Approving more findings still appends them." : "Read-only. Select Edit to change the text.";
-  if (editing) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  $("#cHint").textContent = editing ? "Editing. Tab makes a sub-bullet, Shift+Tab moves it back. Approving more findings still adds them." : "Read-only. Select Edit to change the text.";
+  if (editing) caretEnd(ta); else ta.value = st.comment; // tidy: drop anything the cleaner does not keep
 });
 ta.addEventListener("input", () => { st.comment = ta.value; st.dirty = true; save(); });
 $("#cReset").addEventListener("click", () => { st.dirty = false; st.comment = generate(); ta.value = st.comment; save(); toast("Rebuilt from approved findings"); });
 $("#cCopy").addEventListener("click", () => {
-  const fallback = () => { const ro = ta.readOnly; ta.readOnly = false; ta.select(); try { document.execCommand("copy"); toast("Copied"); } catch(e){ toast("Text selected. Press Ctrl+C to copy."); } ta.readOnly = ro; };
-  try { navigator.clipboard.writeText(ta.value).then(() => toast("Copied"), fallback); } catch(e){ fallback(); }
+  // rich HTML for Azure DevOps / Teams / email (tables get visible borders), plain text for everything else
+  const t = frag(clean(st.comment));
+  t.content.querySelectorAll("[data-q]").forEach(n => n.removeAttribute("data-q"));
+  t.content.querySelectorAll("table").forEach(n => { n.style.borderCollapse = "collapse"; });
+  t.content.querySelectorAll("td,th").forEach(n => { n.style.border = "1px solid #8a8a8a"; n.style.padding = "4px 8px"; });
+  const html = t.innerHTML.replace(/<p><br><\/p>/g, ""), text = plainOf(st.comment);
+  const fallback = () => {
+    const r = document.createRange(); r.selectNodeContents(ta); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    try { document.execCommand("copy"); s.removeAllRanges(); toast("Copied"); } catch(e){ toast("Text selected. Press Ctrl+C to copy."); }
+  };
+  try {
+    navigator.clipboard.write([new ClipboardItem({"text/html": new Blob([html], {type: "text/html"}), "text/plain": new Blob([text], {type: "text/plain"})})])
+      .then(() => toast("Copied with formatting"), fallback);
+  } catch(e){ fallback(); }
 });
 // decisions as a file: the safe way to keep or move them when the page runs without the GapCue server
 $("#cExport").addEventListener("click", () => {
@@ -1304,7 +1594,7 @@ let picking = false;   // waiting for the next selection (contradiction point B,
 let discardArmed = 0;
 const STARTERS = ["What should happen when …?", "What is the maximum / minimum …?", "Is … mandatory?", "Who provides / owns …?",
   "What message is shown when …?", "Which one is correct: … or …?"];
-const typing = () => /^(TEXTAREA|INPUT|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+const typing = () => { const a = document.activeElement; return !!a && (/^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName) || a.isContentEditable); };
 const newId = () => "own-" + (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
 
 // the selection as an anchor: {anchor} | {overlap: id} | {error} | null
@@ -1393,7 +1683,7 @@ function addPickedPoint(){
 $("#pickCancel").addEventListener("click", () => { stopPicking(); if (draft) openDraft("form"); });
 function readDraftFields(){
   if (!draft) return;
-  draft.title = $("#nfTitle").value.trim(); draft.why = $("#nfWhy").value.trim(); draft.q = $("#nfQ").value.trim();
+  draft.title = $("#nfTitle").value.trim(); draft.why = $("#nfWhy").value.trim(); draft.q = $("#nfQ").value;
   if (draft.external) { draft.external.where = $("#nfWhere").value.trim(); draft.external.quote = $("#nfQuote").value.trim(); }
 }
 // fills the form part of the popup (new finding, or editing one of yours)
@@ -1411,12 +1701,15 @@ function renderForm(){
   $("#nfSave").textContent = draft.editing ? "Save changes" : "Add to comment";
   const starters = $("#nfStarters"); starters.innerHTML = "";
   STARTERS.forEach(s => { const b = document.createElement("button"); b.type = "button"; b.className = "starter"; b.textContent = s;
-    b.addEventListener("click", () => { const q = $("#nfQ"); q.value = (q.value.trim() ? q.value.trim() + " " : "") + s; q.focus();
-      const i = q.value.lastIndexOf("…"); if (i >= 0) q.setSelectionRange(i, i + 1); validate(); }); starters.appendChild(b); });
+    b.addEventListener("click", () => { const q = $("#nfQ"); caretEnd(q); document.execCommand("insertText", false, (textOf(q.value) ? " " : "") + s);
+      // select the "…" placeholder so typing replaces it
+      const w = document.createTreeWalker(q, NodeFilter.SHOW_TEXT); let t, last = null; while ((t = w.nextNode())) if (t.nodeValue.includes("…")) last = t;
+      if (last) { const i = last.nodeValue.lastIndexOf("…"), r = document.createRange(); r.setStart(last, i); r.setEnd(last, i + 1); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+      validate(); }); starters.appendChild(b); });
   validate();
 }
 function validate(){
-  const ok = $("#nfQ").value.trim().length > 2 && (!draft || !draft.external || $("#nfWhere").value.trim());
+  const qv = $("#nfQ").value, ok = (textOf(qv).length > 2 || /<table/i.test(qv)) && (!draft || !draft.external || $("#nfWhere").value.trim());
   $("#nfSave").disabled = !ok;
 }
 ["nfQ", "nfWhere"].forEach(id => $("#" + id).addEventListener("input", validate));
@@ -1439,9 +1732,9 @@ $("#nfSave").addEventListener("click", () => {
   if (!draft.q) return;
   const now = Date.now();
   if (draft.editing) {
-    const it = ISSUES[draft.editing], oldLine = lineOf(it.id);
+    const it = ISSUES[draft.editing];
     Object.assign(it, {title: draft.title || it.title, why: draft.why, q: draft.q, external: draft.external, updatedAt: now});
-    const ok = st.status[it.id] === "approved" ? syncComment({replace: [oldLine, lineOf(it.id)]}) : true;
+    const ok = st.status[it.id] === "approved" ? syncComment({replace: it.id}) : true;
     const id = it.id; draft = null; collect(); paint(); save(); open(id); toast("Saved." + (ok ? "" : REBUILD));
     return;
   }
@@ -1464,18 +1757,18 @@ $("#ownDel").addEventListener("click", () => { $("#delAsk").hidden = false; $("#
 $("#delNo").addEventListener("click", () => { $("#delAsk").hidden = true; $("#ownDel").hidden = false; });
 $("#delYes").addEventListener("click", () => {
   const id = openId, it = ISSUES[id]; if (!it || !it.own) return;
-  const was = st.status[id], line = lineOf(id);
+  const was = st.status[id];
   // update the finding list first, then the comment (a rebuilt comment reads the list)
   delete st.status[id];
   st.custom = st.custom.filter(c => c.id !== id); delete ISSUES[id];
   unwrap(id); close(); collect();
-  if (was === "approved") syncComment({remove: line});
+  if (was === "approved") syncComment({remove: id});
   paint(); save();
   toast("Finding deleted", {label: "Undo", fn: () => {
     ISSUES[id] = it; st.custom.push(it); anchorFinding(it);
     if (was) st.status[id] = was;
     collect();
-    if (was === "approved") syncComment({add: lineOf(id)});
+    if (was === "approved") syncComment({add: id});
     paint(); save(); toast("Restored");
   }});
 });

@@ -6,7 +6,7 @@
 
 **Paste a user story. GapCue helps you spot the gaps and contradictions,<br>and drafts the questions for your BA.**
 
-[![version](https://img.shields.io/badge/version-0.2.0-0f7f88)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.3.0-0f7f88)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-566978)](../LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-d97757)](#claude-code)
 [![Codex & others](https://img.shields.io/badge/Codex_·_Cursor_·_Gemini_CLI-skill-0d2233)](#codex-cursor-gemini-cli-and-others)

@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 - 2026-10-16
+
+### Added
+- **Rich text comment and questions**: the BA comment and both question editors (popup ✎ and your own findings)
+  have a one-row formatting bar on top of the text: bold, italic, underline, strikethrough, text and highlight colours,
+  bullets and numbers. **⌄** slides open a second row with sub-bullets (also Tab / Shift+Tab), tables (+/− row and
+  column, Tab moves between cells) and Clear formatting; the choice is remembered.
+  A formatted question goes into the comment as it is.
+- **Copy comment keeps the formatting**, so it pastes into Azure DevOps, Teams or email with lists, colours and table
+  borders. Text pasted into the editors keeps its lists, tables and bold but not its colours; scripts, links and
+  images are dropped.
+- **Better questions**: GapCue now writes each question with its key terms in bold and the story's exact wording in
+  "quotes". Older reviews keep working; their comments and questions are converted when they open.
 
 ### Fixed
 - **Reviews list shows your real progress**: when this browser holds newer decisions than the disk (page opened

@@ -2,7 +2,7 @@
 name: gapcue
 description: GapCue analyses a user story or requirement for the important gaps, ambiguities and contradictions, then shows the whole story as an interactive review page (highlighted findings, linked contradictions with arrows, approve / out-of-scope, the reviewer's own findings, a ready-to-send comment for the BA). Reviews are saved with versions and a history page. Use when the user pastes a story (title, description, acceptance criteria, comments, screenshots) and asks for gap analysis, requirement analysis, a story review, or questions for the BA, or asks to reopen old story reviews.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # GapCue
@@ -73,7 +73,7 @@ Write `<scratchpad>/<id>-story.json` following [examples/sample.json](examples/s
   "findings": [{
     "id": "max-addresses", "kind": "contra|gap", "title": "short title",
     "why": "what is wrong, plain sentences",
-    "q": "the question for the BA (this becomes the comment bullet)",
+    "q": "the question for the BA (this becomes the comment bullet; light formatting, see Rules)",
     "anchors": [{ "text": "exact story text", "label": "Business rules", "in": "#optional-id" }]
   }]
 }
@@ -81,6 +81,9 @@ Write `<scratchpad>/<id>-story.json` following [examples/sample.json](examples/s
 
 Rules:
 - **Keep the user's text word for word.** Restructure it but do not rewrite it. Typos stay.
+- **Questions (`q`) are one line with light formatting**: `**bold**` for the one or two key terms the BA must answer
+  about (a field, a rule, a limit), `*italic*` sparingly for emphasis, and "double quotes" around exact wording taken
+  from the story or a design label. Don't format whole sentences. Write a literal asterisk as `\\*` in the JSON.
 - Usual sections: Description, Acceptance criteria, Discussion. Add others only if the input has them.
 - `html` uses single-quoted attributes and only these classes (the template styles them):
   `block` + `h3 > span.n` (numbered sub-section) · `scope` > `box` > `h4` + `ul` (in/out of scope) ·
@@ -169,6 +172,10 @@ It writes `<ID>-review.html` with the images embedded. Share that file with the 
 - **Add your own finding:** select text in the story → **＋ Gap** or **⇄ Contradiction** (keys G / C). A contradiction can
   point to another part of the story (select it next) or to something outside it (where + quote). Write the question
   (starters help) → **Add to comment**. Own findings show a "you" tag and can be edited or deleted (with Undo).
-- Approved questions become bullets in the BA comment. The comment is read-only until **Edit**. **Copy**,
+- Approved questions become bullets in the BA comment. The comment is read-only until **Edit**, which shows
+  the formatting bar: bold, italic, underline, strikethrough, text and highlight colours, bullets and numbers with
+  sub-bullets (Tab / Shift+Tab), tables (+/− row and column) and Clear formatting. The question editors have the same
+  bar, and a formatted question goes into the comment as it is. **Copy** keeps the formatting, so it pastes into
+  Azure DevOps, Teams or email.
   **Rebuild from approvals**, **Download decisions** and **Load decisions** are next to it.
 - The bottom bar shows where decisions are saved ("Saved to disk" or "Saved in this browser").
