@@ -1528,7 +1528,9 @@ document.querySelectorAll(".rise").forEach((el, i) => {
   el.style.animationDelay = (i * 60) + "ms";
   el.addEventListener("animationend", () => el.classList.remove("rise"), {once:true});
 });
+// every finding decided: open on the normal view (all findings, top of the page) instead of resuming step through
 paint();
+if (st.mode === "step" && total && order.every(id => st.status[id])) st.mode = "all";
 requestAnimationFrame(() => { moveThumb(); if (st.mode === "step") setMode("step"); });
 document.fonts && document.fonts.ready.then(moveThumb);
 })();

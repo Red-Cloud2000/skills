@@ -123,11 +123,12 @@ function writeHistory() {
     const vals = Object.values(st.status || {});
     const ok = vals.filter(v => v === "approved").length, oos = vals.filter(v => v === "oos").length;
     const changed = Math.max(st.updatedAt || 0, fs.statSync(path.join(dir, "story.json")).mtimeMs);
-    rows.push({ slug, story, vs, latest, findings, ok, oos, open: Math.max(0, findings - ok - oos), changed });
+    const key = "gapcue:" + (story.id || story.title) + ":v" + (story.version || latest);
+    rows.push({ slug, story, vs, latest, findings, ok, oos, open: Math.max(0, findings - ok - oos), changed, key, upd: st.updatedAt || 0 });
   }
   rows.sort((a, b) => b.changed - a.changed);
   const body = rows.length ? rows.map(r => `
-    <a class="row" href="${esc(r.slug)}/v${r.latest}/index.html">
+    <a class="row" href="${esc(r.slug)}/v${r.latest}/index.html" data-key="${esc(r.key)}" data-upd="${r.upd}" data-t="${r.changed}" data-ids="${esc((r.story.findings || []).map(f => f.id).join(" "))}">
       <span class="id">${esc(r.story.id || r.slug)}</span>
       <span class="t">${esc(r.story.title || "")}${r.story.titleAr ? ` <span lang="ar">${esc(r.story.titleAr)}</span>` : ""}</span>
       <span class="v">v${r.latest}${r.vs.length > 1 ? ` <small>(${r.vs.length} versions)</small>` : ""}</span>
@@ -158,7 +159,26 @@ h1{font:700 2.2rem/1.1 "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 4px
 <h1>GapCue reviews</h1>
 <p class="sub">${rows.length} ${rows.length === 1 ? "story" : "stories"} · folder <code>${esc(root)}</code></p>
 ${body}
-</main></body></html>`);
+</main><script>
+// a review's decisions can be newer in this browser than on disk (opened from file://, or not saved yet): show the newer copy
+for (const a of document.querySelectorAll(".row")) {
+  let s = null; try { s = JSON.parse(localStorage.getItem(a.dataset.key)); } catch {}
+  let t = +a.dataset.t;
+  if (s && (s.updatedAt || 0) > +a.dataset.upd) {
+    const ids = new Set(a.dataset.ids.split(" ").filter(Boolean));
+    for (const c of Array.isArray(s.custom) ? s.custom : []) if (c && c.id) ids.add(c.id);
+    const v = Object.entries(s.status || {}).filter(([k]) => ids.has(k)).map(([, x]) => x);
+    const ok = v.filter(x => x === "approved").length, oos = v.filter(x => x === "oos").length;
+    const b = a.querySelectorAll(".n b");
+    b[0].textContent = ok; b[1].textContent = oos; b[2].textContent = Math.max(0, ids.size - ok - oos);
+    t = Math.max(t, s.updatedAt);
+  }
+  const d = new Date(t), p = n => String(n).padStart(2, "0");
+  a.querySelector(".d").textContent = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+// back button: reload so the counts are never a stale snapshot
+addEventListener("pageshow", e => { if (e.persisted) location.reload(); });
+</script></body></html>`);
 }
 
 /* ---------- build one review into the reviews folder ---------- */

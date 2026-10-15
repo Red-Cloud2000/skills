@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- **Reviews list shows your real progress**: when this browser holds newer decisions than the disk (page opened
+  from a file, or not saved yet), the list counts those. Going Back to the list reloads it, and times are in local time.
+- **A finished review opens normally**: when every finding is decided, the page opens on All findings at the top
+  instead of resuming Step through on the last finding.
+
 ## 0.2.0 - 2026-10-14
 
 ### Added
