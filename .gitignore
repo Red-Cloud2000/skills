@@ -2,6 +2,10 @@
 gapcue-reviews/
 *-review/
 *-review.html
+# EGM plugin output and its project install (local only)
+EGM.md
+*_DRIFT_REPORT.md
+.claude/settings.json
 # release artifacts
 *.zip
 # temp files from atomic writes

@@ -2,7 +2,7 @@
 name: gapcue
 description: GapCue analyses a user story or requirement for the important gaps, ambiguities and contradictions, then shows the whole story as an interactive review page (highlighted findings, linked contradictions with arrows, approve / out-of-scope, the reviewer's own findings, a ready-to-send comment for the BA). Reviews are saved with versions and a history page. Use when the user pastes a story (title, description, acceptance criteria, comments, screenshots) and asks for gap analysis, requirement analysis, a story review, or questions for the BA, or asks to reopen old story reviews.
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
 ---
 
 # GapCue
@@ -46,6 +46,13 @@ Do not include:
 - defaults QA or developers can decide alone (trimming spaces, exact boundary inclusiveness, error timing)
 - technical details (double-click handling, upload races, caching)
 - speculative extras the story never hints at (new fields, checksums, audit, retention)
+- the status of the designs (on hold, draft, not final), unless the input says so in words. Never infer it.
+- differences between the story and a design's content. Designs are the source for layout and behaviour only
+  (which elements exist, their state, the flow). The story is the source for content: codes, numbers, sample
+  values, field labels and placeholder text. A design that shows a different code, counter value or label than
+  the story is not a finding. A design whose behaviour or outcome differs from the story (a disabled button, a
+  missing step, a message stating another result) still is, and so is anything in a design odd enough that the
+  reviewer should look at it.
 
 Most stories need about 8–14 findings. Mark a finding as **contradiction** only when two or more statements in the
 input really conflict. Everything else is a **gap**.
@@ -84,6 +91,7 @@ Rules:
 - **Questions (`q`) are one line with light formatting**: `**bold**` for the one or two key terms the BA must answer
   about (a field, a rule, a limit), `*italic*` sparingly for emphasis, and "double quotes" around exact wording taken
   from the story or a design label. Don't format whole sentences. Write a literal asterisk as `\\*` in the JSON.
+  Name the scenario or section in the question only when the BA could not tell which part you mean without it.
 - Usual sections: Description, Acceptance criteria, Discussion. Add others only if the input has them.
 - `html` uses single-quoted attributes and only these classes (the template styles them):
   `block` + `h3 > span.n` (numbered sub-section) · `scope` > `box` > `h4` + `ul` (in/out of scope) ·
@@ -95,7 +103,9 @@ Rules:
   in `html` and set `"in": "#that-id"`. A contradiction needs ≥2 anchors, one per conflicting statement, each with a `label`.
   Highlights can't overlap: two findings must not anchor on the same words (or one inside the other). Pick a different
   part of the sentence for the second one, or make it a general finding.
-  A finding with no anchor found goes into a "General findings" list (still works, just without arrows).
+  A finding about a design screenshot can anchor on its `caption`: put the design's exact wording in the caption and
+  use `"in": "figcaption"`, so the arrow comes from the screenshot.
+  A finding with no anchor found goes into a "General findings" list; its arrow comes from its button there.
   Fix every `anchor not found` and `anchor overlaps` warning the build prints, then rerun.
 
 ## 4. Ask where to save (local mode, every run)
@@ -169,13 +179,17 @@ It writes `<ID>-review.html` with the images embedded. Share that file with the 
   and **Approved** / **Out of scope** buttons (click again to clear). It closes with ×, Esc, or a click outside it.
 - Each highlighted point has a lettered chip and a curved arrow into the popup. Points off screen or behind the popup
   get a small marker at the edge. The bottom bar switches between **All findings** and **Step through** (‹ › or ←/→).
+- The bottom bar shows **N left** (findings with no decision yet); click it to go to the next one. Step through also has
+  **Next undecided**, and deciding the last finding jumps back to the first undecided one.
 - **Add your own finding:** select text in the story → **＋ Gap** or **⇄ Contradiction** (keys G / C). A contradiction can
   point to another part of the story (select it next) or to something outside it (where + quote). Write the question
   (starters help) → **Add to comment**. Own findings show a "you" tag and can be edited or deleted (with Undo).
 - Approved questions become bullets in the BA comment. The comment is read-only until **Edit**, which shows
   the formatting bar: bold, italic, underline, strikethrough, text and highlight colours, bullets and numbers with
   sub-bullets (Tab / Shift+Tab), tables (+/− row and column) and Clear formatting. The question editors have the same
-  bar, and a formatted question goes into the comment as it is. **Copy** keeps the formatting, so it pastes into
-  Azure DevOps, Teams or email.
+  bar, and a formatted question goes into the comment as it is. **Copy as Markdown** copies the comment
+  as Markdown (highlights and colours as inline HTML), for Markdown comment boxes such as Azure DevOps.
+  **Copy as rich text** is for editors that take formatted text (Jira, Word, Teams, email); in Jira a highlight
+  takes the nearest colour of Jira's own palette.
   **Rebuild from approvals**, **Download decisions** and **Load decisions** are next to it.
 - The bottom bar shows where decisions are saved ("Saved to disk" or "Saved in this browser").

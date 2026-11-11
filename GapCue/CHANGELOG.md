@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.0 - 2026-11-11
+
+### Added
+- **What's left**: the bottom bar shows **N left**, the findings with no decision yet; click it to go to the next one.
+  Step through has a **Next undecided** button, and deciding the last finding jumps back to the first undecided one.
+- **Arrows for design findings**: a finding can point at a screenshot's caption, so its arrow starts at the design.
+- **Arrows for general findings**: a finding not tied to one sentence gets an arrow from its button in General findings.
+
+### Changed
+- **Two copy buttons** instead of Copy comment. **Copy as Markdown** is for Markdown comment boxes such as Azure
+  DevOps: highlights and colours now survive there (they were dropped when rich text was pasted).
+  **Copy as rich text** is for Jira, Word, Teams and email (in Jira a highlight takes the
+  nearest colour of Jira's own palette).
+- **Fewer design false alarms**: a design that shows a different code, number or label than the story is no longer
+  reported (the story is the source for content). A design whose behaviour differs from the story still is. The
+  designs' status (on hold, not final) is reported only when the input says it in words.
+
+### Fixed
+- **Review server**: a malformed URL (such as `/%E0`) no longer stops the server, and it no longer serves files from
+  sibling folders whose names start with the reviews folder's name (such as `gapcue-reviews2`).
+
 ## 0.3.0 - 2026-10-16
 
 ### Added

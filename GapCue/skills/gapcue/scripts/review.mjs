@@ -76,7 +76,8 @@ function loadStory(inputFile) {
 // rough anchor check (tags = word breaks, like the page); misses show under "General findings"
 function checkAnchors(data) {
   const flat = h => h.replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").toLowerCase();
-  const storyText = (data.sections || []).map(s => flat(s.html)).join(" | ");
+  // screenshot captions count too: a design finding can anchor there ("in": "figcaption")
+  const storyText = [...(data.sections || []).map(s => flat(s.html)), ...(data.images || []).map(im => (im.caption || "").replace(/\s+/g, " ").toLowerCase())].join(" | ");
   const all = (data.findings || []).flatMap(f => (f.anchors || []).map(a => ({ id: f.id, a, t: a.text.replace(/\s+/g, " ").trim().toLowerCase() })));
   for (const x of all) if (!storyText.includes(x.t)) console.warn(`anchor not found [${x.id}]: ${x.a.text}`);
   // highlights can't nest: text inside another finding's highlight is never found on the page
@@ -253,7 +254,9 @@ function openBrowser(url) {
 
 function serve(page) {
   const server = http.createServer((req, res) => {
-    const rel = decodeURIComponent(req.url.split("?")[0]).replace(/^\/+/, "");
+    let rel;
+    try { rel = decodeURIComponent(req.url.split("?")[0]).replace(/^\/+/, ""); }
+    catch { res.writeHead(400); return res.end("Bad URL"); } // malformed %-escape must not crash the server
     if (rel === "__gapcue") { res.writeHead(200, { "Content-Type": "application/json" }); return res.end(JSON.stringify({ root })); }
     // save decisions: PUT <ID>/v<N>/state.json, only from this server's own pages
     if (req.method === "PUT") {
@@ -277,7 +280,8 @@ function serve(page) {
     if (rel === "" || rel === "index.html") writeHistory(); // always fresh
     let file = path.join(root, rel || "index.html");
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
-    if (!file.startsWith(root) || !fs.existsSync(file)) { res.writeHead(404); return res.end("Not found"); }
+    const inRoot = path.relative(root, file);
+    if (inRoot === ".." || inRoot.startsWith(".." + path.sep) || path.isAbsolute(inRoot) || !fs.existsSync(file)) { res.writeHead(404); return res.end("Not found"); }
     res.writeHead(200, { "Content-Type": types[path.extname(file).toLowerCase()] || "application/octet-stream", "Cache-Control": "no-store" });
     fs.createReadStream(file).pipe(res);
   });

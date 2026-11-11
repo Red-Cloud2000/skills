@@ -427,6 +427,10 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
 .toast button{margin-left:10px;font:600 .82rem var(--f-body);color:var(--accent);background:transparent;border:0;cursor:pointer;text-decoration:underline}
 .toast.act{pointer-events:auto}
 .gchip.c{background:var(--contra-bg);box-shadow:inset 0 -2px 0 var(--contra)}
+.gchip.cur{position:relative;z-index:41}
+.left{font:inherit;color:inherit;background:var(--gap-bg);border:0;border-radius:8px;padding:4px 8px;cursor:pointer;display:inline-flex;align-items:center}
+.left b{color:var(--ink)}
+.nav button.nextu{width:auto;padding:0 12px;font:500 .78rem var(--f-body);white-space:nowrap}
 .gchip[data-s="approved"]{background:var(--ok-bg);box-shadow:inset 0 -2px 0 var(--ok)}
 .gchip[data-s="oos"]{background:var(--oos-bg);box-shadow:inset 0 -2px 0 var(--oos);text-decoration:line-through}
 /* buttons: lift on hover, squish on press */
@@ -465,7 +469,7 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
   </section>
   <section class="sec rise" id="designs" hidden>
     <div class="sec-head"><h2>Design references</h2><span class="eyebrow" id="designCount"></span></div>
-    <div class="refs" id="refs"></div>
+    <div class="refs story" id="refs"></div>
   </section>
   <section class="sec composer rise" id="comment">
     <div class="sec-head"><h2>Comment to the Business Analyst</h2><span class="eyebrow" id="cCount">0 points</span></div>
@@ -475,7 +479,8 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
       <div id="cText" class="rich" contenteditable="false" role="textbox" aria-multiline="true" aria-labelledby="cLabel" spellcheck="true"></div></div>
     <div class="tools">
       <button class="btn" id="cEdit" type="button" aria-pressed="false">Edit</button>
-      <button class="btn primary" id="cCopy" type="button">Copy comment</button>
+      <button class="btn primary" id="cCopy" type="button" title="For Markdown comment boxes such as Azure DevOps. Keeps highlights and colours.">Copy as Markdown</button>
+      <button class="btn" id="cCopyRich" type="button" title="For Jira, Word, Teams and email.">Copy as rich text</button>
       <button class="btn" id="cReset" type="button" title="Rebuild the text from the approved findings">Rebuild from approvals</button>
       <button class="btn" id="cExport" type="button" title="Save your decisions and own findings as a file">Download decisions</button>
       <button class="btn" id="cImport" type="button" title="Load decisions from a file">Load decisions</button>
@@ -569,8 +574,10 @@ body{margin:0}[hidden]{display:none!important}img{max-width:100%}
       <button type="button" id="prev" aria-label="Previous finding">‹</button>
       <div class="pos" id="pos"></div>
       <button type="button" id="next" aria-label="Next finding">›</button>
+      <button type="button" class="nextu" id="nextU" title="Go to the next finding with no decision yet" hidden>Next undecided</button>
     </div>
     <div class="tally">
+      <button type="button" class="left" id="tLeft" title="Go to the next finding with no decision yet" hidden><i class="dot" style="background:var(--gap)"></i><b id="tLeftN">0</b>&nbsp;<span class="lbl">left</span></button>
       <span><i class="dot" style="background:var(--ok)"></i><b id="tOk">0</b> <span class="lbl">approved</span></span>
       <span><i class="dot" style="background:var(--oos)"></i><b id="tOos">0</b> <span class="lbl">out of scope</span></span>
       <button class="addbtn" id="addBtn" type="button" title="Select text in the story, then add it as a gap or contradiction">＋ Add finding</button>
@@ -796,6 +803,8 @@ function paint(){
   const oos = order.filter(g => st.status[g] === "oos").length;
   $("#sOk").textContent = $("#tOk").textContent = ok;
   $("#sOos").textContent = $("#tOos").textContent = oos;
+  const left = total - ok - oos;
+  $("#tLeftN").textContent = left; $("#tLeft").hidden = !left;
   $("#cCount").textContent = ok + (ok === 1 ? " point" : " points");
   $("#cEmpty").hidden = ok > 0;
   if (openId) {
@@ -816,14 +825,22 @@ function locOf(m){
   const tr = m.closest("tr");
   if (tr) { const c = tr.querySelector("td"); const first = c ? (c.childNodes[0] || {}).textContent || c.textContent : ""; const blk = m.closest(".block"); const t = blk && blk.querySelector("h3"); return (t ? short(t.textContent.replace(/^\d+/, ""), 18) + " · " : "") + short(first, 16); }
   if (m.closest(".comment")) return "Discussion comment";
+  const fc = m.closest("figcaption");
+  if (fc) return "Design " + ([...document.querySelectorAll("#refs figcaption")].indexOf(fc) + 1) + " · " + short(fc.textContent, 22);
   const bh = m.closest(".box")?.querySelector("h4"), t = m.closest(".block")?.querySelector("h3");
   if (t) { const n = t.querySelector(".n"); return (n ? "Section " + n.textContent + " · " : "") + short(t.textContent.replace(n ? n.textContent : "", ""), 22) + (bh ? " · " + short(bh.textContent, 14) : ""); }
   const sec = m.closest(".sec"); return sec ? short(sec.querySelector("h2").textContent, 24) : "Story";
 }
-const pointsOf = id => heads(id).map((m, i) => {
-  const a = (ISSUES[id].anchors || [])[+m.dataset.a] || {};
-  return {m, letter: LETTER(i), label: a.label || locOf(m), text: norm(a.text || m.textContent)};
-});
+// a finding with no highlight points from its chip in "General findings"
+const gchipOf = id => [...document.querySelectorAll(".gchip")].find(b => b.dataset.g === id);
+const pointsOf = id => {
+  const hs = heads(id), g = !hs.length && gchipOf(id);
+  if (g) return [{m: g, letter: "A", label: "General findings", text: ISSUES[id].title || ""}];
+  return hs.map((m, i) => {
+    const a = (ISSUES[id].anchors || [])[+m.dataset.a] || {};
+    return {m, letter: LETTER(i), label: a.label || locOf(m), text: norm(a.text || m.textContent)};
+  });
+};
 function flashPoint(id, m){ segsOf(id).filter(s => s.dataset.a === m.dataset.a).forEach(s => { s.classList.remove("flash"); void s.offsetWidth; s.classList.add("flash"); }); }
 function jumpTo(id, m){ scrollToMark(m, 0.14); flashPoint(id, m); }
 
@@ -833,7 +850,7 @@ function open(id){
   cancelQ(true);
   openId = id;
   hideSelbar();
-  document.querySelectorAll(".hl").forEach(m => m.classList.toggle("cur", m.dataset.g === id));
+  document.querySelectorAll(".hl, .gchip").forEach(m => m.classList.toggle("cur", m.dataset.g === id));
   const editing = !!(draft && (it.draft || draft.editing === id));
   const b = $("#popBadge");
   b.textContent = (it.kind === "contra" ? "Contradiction" : "Gap") + (it.own ? " · Yours" : "");
@@ -910,6 +927,7 @@ function close(){
   cancelQ(true);
   openId = null;
   body.classList.remove("pop-open");
+  document.querySelectorAll(".gchip").forEach(m => m.classList.remove("cur"));
   if (st.mode !== "step") document.querySelectorAll(".hl").forEach(m => m.classList.remove("cur"));
   $("#arrowLayer").innerHTML = ""; $("#pills").innerHTML = ""; paths = [];
   stopLoop();
@@ -923,7 +941,7 @@ function scrollToMark(m, frac){
 }
 // bring all highlighted points of a finding into view when they fit next to the popup; otherwise lead with the first one
 function scrollToGroup(id){
-  const hs = heads(id); if (!hs.length) { placePopup(); return; }
+  const hs = pointsOf(id).map(p => p.m); if (!hs.length) { placePopup(); return; }
   const rs = hs.map(m => m.getBoundingClientRect());
   const top = Math.min(...rs.map(r => r.top)), bottom = Math.max(...rs.map(r => r.bottom));
   const side = body.classList.contains("side");
@@ -940,7 +958,7 @@ function placePopup(){
   const pop = $("#pop"), H = pop.offsetHeight, W = pop.offsetWidth;
   const minTop = 12, maxTop = Math.max(minTop, usableBottom() - H);
   const left = (innerWidth - W) / 2, right = left + W;
-  const rects = segsOf(openId).flatMap(m => [...m.getClientRects()]).filter(r => r.bottom > 0 && r.top < innerHeight && r.right > left && r.left < right);
+  const rects = (segsOf(openId).length ? segsOf(openId) : pointsOf(openId).map(p => p.m)).flatMap(m => [...m.getClientRects()]).filter(r => r.bottom > 0 && r.top < innerHeight && r.right > left && r.left < right);
   const mid = (minTop + maxTop) / 2;
   let best = mid, bestScore = Infinity;
   for (let y = minTop; y <= maxTop; y += 6) {
@@ -1221,22 +1239,53 @@ function clean(html, noColors){
   return t.innerHTML.replace(/(<p>(<br>)?<\/p>)+$/, "").trim();
 }
 const htmlOf = q => isHtml(q) ? clean(q) : mdInline(q); // a question, old or new form
-// rich text to plain text (• bullets, indented sub-bullets, " | " between table cells) for apps that take no HTML
-function plainOf(h){
+// rich text to Markdown, for comment boxes that take Markdown (Azure DevOps): pasting HTML there drops highlights
+// and colours, but the same boxes render them when they arrive as inline HTML inside the Markdown
+function mdOf(h){
+  const esc = s => s.replace(/[\\*_`\[\]]/g, "\\$&").replace(/</g, "&lt;");
+  // markers must touch the text: "**bold **" is not bold
+  const wrap = (open, s, close = open) => { const p = /^(\s*)([\s\S]*?)(\s*)$/.exec(s); return p[2] ? p[1] + open + p[2] + close + p[3] : s; };
+  const inline = n => [...n.childNodes].map(c => {
+    if (c.nodeType === 3) return esc(c.nodeValue.replace(/\s+/g, " "));
+    if (c.nodeType !== 1) return "";
+    const tag = c.nodeName;
+    if (tag === "BR") return "  \n";
+    if (/^(UL|OL|TABLE)$/.test(tag)) return ""; // blocks: written by list() / table()
+    const s = inline(c);
+    if (tag === "B" || tag === "STRONG") return wrap("**", s);
+    if (tag === "I" || tag === "EM") return wrap("*", s);
+    if (tag === "S" || tag === "STRIKE") return wrap("~~", s);
+    if (tag === "U") return wrap("<u>", s, "</u>");
+    if (tag === "SPAN" && c.getAttribute("style")) return wrap(`<span style="${c.getAttribute("style")}">`, s, "</span>");
+    return s;
+  }).join("");
   const out = [];
-  (function walk(n, depth){
+  const list = (el, pad) => [...el.children].forEach((li, k) => {
+    const mark = el.nodeName === "OL" ? k + 1 + ". " : "- ";
+    out.push(pad + mark + inline(li).trim());
+    blocks(li, pad + " ".repeat(mark.length), true);
+  });
+  const table = (el, pad) => {
+    const rows = [...el.rows].map(r => pad + "| " + [...r.cells].map(c => inline(c).trim().replace(/\n/g, " ").replace(/\|/g, "\\|") || " ").join(" | ") + " |");
+    if (!rows.length) return;
+    rows.splice(1, 0, pad + "|" + " --- |".repeat(el.rows[0].cells.length));
+    out.push("", ...rows, "");
+  };
+  function blocks(n, pad, nestedOnly){
+    let run = [];
+    const flush = () => { const t = inline({ childNodes: run }).trim(); if (t) out.push(pad + t, ""); run = []; };
     for (const c of n.childNodes) {
-      if (c.nodeType === 3) { out.push(c.nodeValue); continue; }
-      if (c.nodeType !== 1) continue;
-      const tag = c.nodeName, pad = "  ".repeat(depth);
-      if (tag === "BR") out.push("\n" + pad);
-      else if (tag === "LI") { const p = c.parentElement; out.push("\n" + pad + (p && p.nodeName === "OL" ? [...p.children].indexOf(c) + 1 + ". " : "• ")); walk(c, depth + 1); }
-      else if (tag === "TR") { out.push("\n" + pad); [...c.cells].forEach((cell, k) => { if (k) out.push(" | "); walk(cell, depth); }); }
-      else if (tag === "P" || tag === "TABLE") { out.push("\n" + pad); walk(c, depth); }
-      else walk(c, depth);
+      const tag = c.nodeName;
+      if (tag === "UL" || tag === "OL") { flush(); list(c, pad); if (!nestedOnly) out.push(""); }
+      else if (tag === "TABLE") { flush(); table(c, pad); }
+      else if (nestedOnly) continue; // a list item's own text is already on its line
+      else if (tag === "P") { flush(); run = [c]; flush(); }
+      else run.push(c);
     }
-  })(frag(h).content, 0);
-  return out.join("").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+    flush();
+  }
+  blocks(frag(h).content, "");
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 // give a contenteditable box a textarea-like .value (clean HTML), so the rest of the page reads it the same way
 function richBox(el){
@@ -1408,9 +1457,19 @@ function setStatus(id, s, quiet){
   const next = prev === s ? null : s;
   if (next) st.status[id] = next; else delete st.status[id];
   syncComment({remove: prev === "approved" && next !== "approved" ? id : null, add: next === "approved" ? id : null});
-  save(); paint();
-  if (!quiet) toast(next === "approved" ? "Added to the comment" : next === "oos" ? "Marked out of scope" : "Choice cleared");
+  save(); paint(); syncNav();
+  if (quiet) return;
+  toast(next === "approved" ? "Added to the comment" : next === "oos" ? "Marked out of scope" : "Choice cleared");
+  // step through: deciding the last finding goes back to the first one still undecided
+  const left = order.filter(g => !st.status[g]).length;
+  if (!next || st.mode !== "step" || id !== order[st.cur]) return;
+  if (!left) return toast("All " + total + " findings decided ✓");
+  if (st.cur !== total - 1) return;
+  toast(left + " left · going to the first one");
+  clearTimeout(jumpTimer);
+  jumpTimer = setTimeout(() => { if (openId === id && st.status[id] && st.cur === total - 1) goUndecided(); }, 700);
 }
+let jumpTimer;
 $("#bApprove").addEventListener("click", () => openId && setStatus(openId, "approved"));
 $("#bOos").addEventListener("click", () => openId && setStatus(openId, "oos"));
 
@@ -1467,21 +1526,39 @@ $("#cEdit").addEventListener("click", () => {
 });
 ta.addEventListener("input", () => { st.comment = ta.value; st.dirty = true; save(); });
 $("#cReset").addEventListener("click", () => { st.dirty = false; st.comment = generate(); ta.value = st.comment; save(); toast("Rebuilt from approved findings"); });
-$("#cCopy").addEventListener("click", () => {
-  // rich HTML for Azure DevOps / Teams / email (tables get visible borders), plain text for everything else
+// put text (and HTML, if given) on the clipboard through a copy event: also works when the page is opened as a file
+function copyOut(text, html, msg){
+  const on = e => { e.clipboardData.setData("text/plain", text); if (html) e.clipboardData.setData("text/html", html); e.preventDefault(); };
+  document.addEventListener("copy", on);
+  let ok = false; try { ok = document.execCommand("copy"); } catch(e){}
+  document.removeEventListener("copy", on);
+  toast(ok ? msg : "Could not copy. Select the text and press Ctrl+C.");
+}
+// Markdown only: Markdown comment boxes (Azure DevOps) turn pasted HTML into Markdown and drop highlights and colours,
+// but render them when they arrive as inline HTML inside Markdown text
+$("#cCopy").addEventListener("click", () => copyOut(mdOf(clean(st.comment)), null, "Copied as Markdown"));
+// rich text for editors that take HTML (Jira, Word, Teams, email); tables get visible borders
+$("#cCopyRich").addEventListener("click", () => {
   const t = frag(clean(st.comment));
   t.content.querySelectorAll("[data-q]").forEach(n => n.removeAttribute("data-q"));
   t.content.querySelectorAll("table").forEach(n => { n.style.borderCollapse = "collapse"; });
   t.content.querySelectorAll("td,th").forEach(n => { n.style.border = "1px solid #8a8a8a"; n.style.padding = "4px 8px"; });
-  const html = t.innerHTML.replace(/<p><br><\/p>/g, ""), text = plainOf(st.comment);
-  const fallback = () => {
-    const r = document.createRange(); r.selectNodeContents(ta); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
-    try { document.execCommand("copy"); s.removeAllRanges(); toast("Copied"); } catch(e){ toast("Text selected. Press Ctrl+C to copy."); }
-  };
-  try {
-    navigator.clipboard.write([new ClipboardItem({"text/html": new Blob([html], {type: "text/html"}), "text/plain": new Blob([text], {type: "text/plain"})})])
-      .then(() => toast("Copied with formatting"), fallback);
-  } catch(e){ fallback(); }
+  // Jira keeps a pasted highlight only in its own editor's shape and only in its own palette colours, so add the
+  // nearest one (other apps read the style and ignore the rest)
+  const JIRA_MARKS = ["#F8E6A0", "#FEDEC8", "#FDD0EC", "#D3F1A7", "#C6EDFB", "#DFD8FD", "#DCDFE4"]; // same order as MARKS
+  const rgb = c => c.startsWith("#") ? [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)) : (c.match(/\d+/g) || []).slice(0, 3).map(Number);
+  t.content.querySelectorAll("span").forEach(n => {
+    const c = rgb(n.style.backgroundColor);
+    if (c.length !== 3) return;
+    const dist = p => rgb(p).reduce((sum, v, i) => sum + (v - c[i]) ** 2, 0);
+    n.className = "fabric-background-color-mark";
+    const own = MARKS.findIndex(m => String(rgb(m)) === String(c)); // one of the page's own highlight colours: same hue in Jira
+    const jira = own >= 0 ? JIRA_MARKS[own] : JIRA_MARKS.reduce((a, b) => dist(b) < dist(a) ? b : a);
+    n.setAttribute("data-background-custom-color", jira);
+    n.style.backgroundColor = jira; // Jira ignored the highlight when the style kept another colour
+    n.style.setProperty("--custom-palette-color", jira);
+  });
+  copyOut(mdOf(clean(st.comment)), t.innerHTML.replace(/<p><br><\/p>/g, ""), "Copied as rich text");
 });
 // decisions as a file: the safe way to keep or move them when the page runs without the GapCue server
 $("#cExport").addEventListener("click", () => {
@@ -1809,12 +1886,27 @@ function syncNav(){
   const em = document.createElement("em"); em.textContent = isContra(order[st.cur]) ? "Contradiction" : "Gap"; pos.append(em);
   $("#prev").disabled = st.cur <= 0;
   $("#next").disabled = st.cur >= total - 1;
+  $("#nextU").hidden = undecidedAfter() < 0;
+}
+// the next finding with no decision, after the current one (wrapping round); -1 when the others are all decided
+function undecidedAfter(){
+  for (let k = 1; k < total; k++) { const i = (st.cur + k + total) % total; if (!st.status[order[i]]) return i; }
+  return -1;
+}
+// the "N left" button and the jump after the last finding: the current one if it is closed and undecided, else the next undecided
+function goUndecided(){
+  const here = st.cur >= 0 && st.cur < total && !st.status[order[st.cur]];
+  let u = st.cur < 0 || st.cur >= total ? order.findIndex(g => !st.status[g]) : here && openId !== order[st.cur] ? st.cur : undecidedAfter();
+  if (u < 0 && here) u = st.cur;
+  if (u >= 0) { st.cur = u; save(); open(order[u]); }
 }
 function step(d){ const n = st.cur + d; if (n < 0 || n >= total) return; st.cur = n; save(); open(order[n]); }
 $("#mAll").addEventListener("click", () => setMode("all"));
 $("#mStep").addEventListener("click", () => setMode("step"));
 $("#prev").addEventListener("click", () => step(-1));
 $("#next").addEventListener("click", () => step(1));
+$("#tLeft").addEventListener("click", e => { e.stopPropagation(); goUndecided(); });
+$("#nextU").addEventListener("click", goUndecided);
 
 // drop entrance-animation classes so they leave no stacking context behind the raised highlights
 document.querySelectorAll(".rise").forEach((el, i) => {
